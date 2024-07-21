@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext", // or "esnext" for ES modules
+    "target": "es6", // or a higher version
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
