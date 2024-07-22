@@ -9,7 +9,7 @@ import { SiGooglesheets } from "react-icons/si";
 const Page = () => {
   const menus = [
     { name: "Products", url: "/products", icon: <AiFillProduct size={15} /> },
-    { name: "Orders", url: "/orders", icon: <GrOrderedList size={15} /> },
+    { name: "Orders", url: "/order", icon: <GrOrderedList size={15} /> },
     { name: "Sale", url: "/sale", icon: <FaSalesforce size={15} /> },
     { name: "Purchase", url: "/purchase", icon: <BiPurchaseTag size={15} /> },
     {

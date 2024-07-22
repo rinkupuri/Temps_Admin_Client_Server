@@ -77,31 +77,61 @@ export const createProductCSV = async (req: Request, res: Response) => {
 export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
   let { brand: brandQuerry, limit, page } = req.query;
   let whereQuerry = {};
-  if (brandQuerry) {
-    if (limit && isNaN(parseInt(limit as string)))
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid limit value" });
-    if (page && isNaN(parseInt(page as string)))
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid page value" });
-    if (parseInt(limit as string) > 100) {
-      limit = "100";
+
+  // handling page querry
+
+  if (!parseInt(page as string)) {
+    if (parseInt(page as string) < 0) {
+      page = "1";
     }
-    const brandName = brandQuerry
-      .toString()
-      .toLocaleLowerCase()
-      .replace(/\_/g, " ");
-    whereQuerry = {
-      contains: brandName,
-      mode: "insensitive",
-    };
+    page = "1";
+  }
+
+  // handeling limit querry
+
+  if (limit && isNaN(parseInt(limit as string)))
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid limit value" });
+  if (parseInt(limit as string) > 100) {
+    limit = "100";
+  }
+
+  // handling Brand Querry
+
+  if (brandQuerry) {
+    if (brandQuerry === "all") {
+      whereQuerry = {};
+    } else {
+      const brandName = brandQuerry
+        .toString()
+        .toLocaleLowerCase()
+        .replace(/\_/g, " ");
+      whereQuerry = {
+        contains: brandName,
+        mode: "insensitive",
+      };
+    }
   }
 
   const products = await prismaClient.product.findMany({
     where: {
-      brand: whereQuerry,
+      AND: [
+        { brand: whereQuerry },
+        {
+          stockId: {
+            OR: [
+              { ddnStock: { gt: 0 } },
+              { dlStock: { gt: 0 } },
+              { godwanStock: { gt: 0 } },
+              { ibStock: { gt: 0 } },
+              { mainStock: { gt: 0 } },
+              { mtStock: { gt: 0 } },
+              { smapleLine: { gt: 0 } },
+            ],
+          },
+        },
+      ],
     },
     take: parseInt(limit as string) || 10, // Default limit is 10
     skip:
@@ -111,6 +141,7 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
       brand: true,
       modelName: true,
       mrp: true,
+
       stockId: {
         select: {
           ddnStock: true,
@@ -169,3 +200,17 @@ export const serachProduct = AsyncWrapper(
     });
   }
 );
+
+export const getBrands = AsyncWrapper(async (req: Request, res: Response) => {
+  const brands = await prismaClient.product.findMany({
+    select: {
+      brand: true,
+    },
+    distinct: ["brand"],
+  });
+  res.status(200).json({
+    success: true,
+    message: "Brands fetched",
+    brands,
+  });
+});

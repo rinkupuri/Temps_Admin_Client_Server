@@ -4,14 +4,19 @@ import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
 import dotEnv from "dotenv";
-import multer from "multer";
+import cors from "cors";
+import cartRoute from "./routes/cart.routes";
 const app = express();
 
 // All milddlewares
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 dotEnv.config();
 connectDB();
-
 
 // Use body-parser middleware to parse JSON and urlencoded form data
 app.use(express.json());
@@ -26,6 +31,7 @@ app.get("/", (req: Request, res: Response) => {
 // product Routes used
 
 app.use("/api/v1/product", productRoute);
+app.use("/api/v1/cart", cartRoute);
 
 app.listen(8000, () => {
   console.log("Server Listinging");

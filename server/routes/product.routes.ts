@@ -2,8 +2,9 @@ import express from "express";
 import {
   createProduct,
   createProductCSV,
+  getBrands,
   getProducts,
-  serachProduct
+  serachProduct,
 } from "../controllers/products.controller";
 import multer from "multer";
 const router = express.Router();
@@ -13,5 +14,6 @@ router.post("/create", createProduct);
 router.post("/createcsv", upload.single("csvData"), createProductCSV);
 router.get("/get", getProducts);
 router.get("/search", serachProduct);
+router.get("/brand", getBrands);
 
 export default router;

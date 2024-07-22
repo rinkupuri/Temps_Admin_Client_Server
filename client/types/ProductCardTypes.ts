@@ -1,21 +1,22 @@
-export interface product {
-  "Model No.": string;
-  Brand: string;
-  Image: string;
-  MRP: string;
-  Cart?: string;
-  MTSTOCK: string;
-  IBSTOCK: string;
-  DLSTOCK: string;
-  DDNSTOCK: string;
-  Total: string;
+export interface Stock {
+  ddnStock: number;
+  dlStock: number;
+  godwanStock: number;
+  ibStock: number;
+  mainStock: number;
+  mtStock: number;
+  smapleLine: number;
+}
+
+export interface Product {
+  image: string;
+  brand: string;
+  modelName: string;
+  mrp: number;
+  stockId: Stock;
 }
 
 export interface cart {
-  product: product;
-  MTQty: number;
-  IBQty: number;
-  DLQty: number;
-  DDNQty: number;
-  MoveFrom: string;
+  productId: string;
+  quantity: Stock;
 }

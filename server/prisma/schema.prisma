@@ -32,5 +32,26 @@ model Product {
   brand     String
   image     String
   mrp       Int
+  totalStock Int @default(0)
   stockId   Stock?
+}
+
+model CartQuantity {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  mtStock     Int    @default(0)
+  ibStock     Int    @default(0)
+  ddnStock    Int    @default(0)
+  dlStock     Int    @default(0)
+  mainStock   Int    @default(0)
+  smapleLine  Int    @default(0)
+  godwanStock Int    @default(0)
+  cartId      String @unique @db.ObjectId
+  Cart        Cart   @relation(fields: [cartId], references: [id])
+}
+
+model Cart {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  cartId    String        
+  productId String        @unique @db.ObjectId
+  quantity  CartQuantity?
 }

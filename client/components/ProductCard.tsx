@@ -9,23 +9,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { cart, product } from "@/types/ProductCardTypes";
+import { cart, Product } from "@/types/ProductCardTypes";
 import cartJsonFile from "@/jsons/cart.json";
 import axios from "axios";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const ProductCard: FC<{
-  product: product;
+  product: Product;
   cartData?: cart;
   cart: cart[] | undefined;
   setCart: (cart: any) => void;
 }> = ({ product, cart, setCart, cartData }) => {
-  const [cartMTQTY, setCartMTQTY] = useState<number>(cartData?.MTQty || 0);
-  const [cartIBQTY, setCartIBQTY] = useState<number>(cartData?.IBQty || 0);
-  const [cartDLQTY, setCartDLQTY] = useState<number>(cartData?.DLQty || 0);
-  const [cartDDNQTY, setCartDDNQTY] = useState<number>(cartData?.DDNQty || 0);
-  const [fromLocation, setFromLocation] = useState<string>(
-    cartData?.MoveFrom || ""
+  const path = usePathname();
+  console.log(path);
+  const [cartMTQTY, setCartMTQTY] = useState<number>(
+    cartData?.quantity.mtStock || 0
   );
+  const [cartIBQTY, setCartIBQTY] = useState<number>(
+    cartData?.quantity.ibStock || 0
+  );
+  const [cartDLQTY, setCartDLQTY] = useState<number>(
+    cartData?.quantity.dlStock || 0
+  );
+  const [cartDDNQTY, setCartDDNQTY] = useState<number>(
+    cartData?.quantity.ddnStock || 0
+  );
+  const [fromLocation, setFromLocation] = useState<string>("");
 
   useEffect(() => {
     if (cartMTQTY || cartIBQTY || cartDLQTY || cartDDNQTY || fromLocation)
@@ -33,11 +42,11 @@ const ProductCard: FC<{
         setCart((prev: any) => {
           const array = [...prev];
           const isExits = array.filter(
-            (value) => value.product["Model No."] === product["Model No."]
+            (value) => value.product.modelName === product.modelName
           );
           if (isExits.length) {
             array.map((value) => {
-              if (value.product["Model No."] === product["Model No."]) {
+              if (value.product.modelName === product.modelName) {
                 value.DDNQty = cartDDNQTY;
                 value.DLQty = cartDLQTY;
                 value.IBQty = cartIBQTY;
@@ -50,16 +59,19 @@ const ProductCard: FC<{
               ...prev,
               {
                 product: {
-                  "Model No.": product["Model No."],
-                  Brand: product.Brand,
-                  Image: product.Image,
-                  MRP: product.MRP,
-                  Cart: product.Cart,
-                  MTSTOCK: product.MTSTOCK,
-                  IBSTOCK: product.IBSTOCK,
-                  DLSTOCK: product.DLSTOCK,
-                  DDNSTOCK: product.DDNSTOCK,
-                  Total: product.Total,
+                  modelName: product.modelName,
+                  brand: product.brand,
+                  image: product.image,
+                  mrp: product.mrp,
+                  stockId: {
+                    ddnStock: product.stockId.ddnStock,
+                    dlStock: product.stockId.dlStock,
+                    godwanStock: product.stockId.godwanStock,
+                    ibStock: product.stockId.ibStock,
+                    mainStock: product.stockId.mainStock,
+                    mtStock: product.stockId.mtStock,
+                    smapleLine: product.stockId.smapleLine,
+                  },
                 },
                 MTQty: cartMTQTY,
                 IBQty: cartIBQTY,
@@ -72,16 +84,19 @@ const ProductCard: FC<{
               ...prev,
               {
                 product: {
-                  "Model No.": product["Model No."],
-                  Brand: product.Brand,
-                  Image: product.Image,
-                  MRP: product.MRP,
-                  Cart: product.Cart,
-                  MTSTOCK: product.MTSTOCK,
-                  IBSTOCK: product.IBSTOCK,
-                  DLSTOCK: product.DLSTOCK,
-                  DDNSTOCK: product.DDNSTOCK,
-                  Total: product.Total,
+                  modelName: product.modelName,
+                  brand: product.brand,
+                  image: product.image,
+                  mrp: product.mrp,
+                  stockId: {
+                    ddnStock: product.stockId.ddnStock,
+                    dlStock: product.stockId.dlStock,
+                    godwanStock: product.stockId.godwanStock,
+                    ibStock: product.stockId.ibStock,
+                    mainStock: product.stockId.mainStock,
+                    mtStock: product.stockId.mtStock,
+                    smapleLine: product.stockId.smapleLine,
+                  },
                 },
                 MTQty: cartMTQTY,
                 IBQty: cartIBQTY,
@@ -112,12 +127,12 @@ const ProductCard: FC<{
     <div className=" border-[0.3px] border-zinc-700 my-5 rounded-md flex flex-col">
       <img
         className="object-contain rounded-t-md w-full h-auto"
-        src={product.Image}
+        src={product.image}
         alt=""
       />
       <div className="flex p-2 justify-between items-center w-full">
-        <span className="text-[12px]">{product["Model No."]}</span>
-        <span className="text-[12px]">{product.Brand}</span>
+        <span className="text-[12px]">{product.modelName}</span>
+        <span className="text-[12px]">{product.brand}</span>
       </div>
 
       {/* stock section */}
@@ -125,47 +140,74 @@ const ProductCard: FC<{
       <div className="flex flex-col w-full">
         <div className="flex my-1 justify-evenly items-center">
           <span className="text-[12px] flex w-full justify-center items-center">
-            Stock : {product.Total || 0}
+            Stock : {product.mrp || 0}
           </span>
           <span className="text-[12px] flex w-full justify-center items-center">
-            MRP : {product.MRP}
+            MRP : {product.mrp}
           </span>
         </div>
-        <div className="flex justify-evenly items-center">
+        <div className="flex  justify-evenly items-center">
           <span
-            className={`text-[12px]  rounded-full p-[2px] px-2 ${
-              parseInt(product.DDNSTOCK) ? "bg-green-600" : "bg-zinc-800"
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.ddnStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            DDN : {product.DDNSTOCK || 0}
+            <span> DDN :</span> <span> {product.stockId.ddnStock || 0}</span>
           </span>
           <span
-            className={`text-[12px]  rounded-full p-[2px] px-2 ${
-              parseInt(product.DLSTOCK) ? "bg-green-600" : "bg-zinc-800"
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.dlStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            DL : {product.DLSTOCK || 0}
+            <span> DL :</span> <span> {product.stockId.dlStock || 0}</span>
           </span>
           <span
-            className={`text-[12px]  rounded-full p-[2px] px-2 ${
-              parseInt(product.MTSTOCK) ? "bg-green-600" : "bg-zinc-800"
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.mtStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            MT : {product.MTSTOCK || 0}
+            <span> MT :</span> <span> {product.stockId.mtStock || 0}</span>
           </span>
           <span
-            className={`text-[12px]  rounded-full p-[2px] px-2 ${
-              parseInt(product.IBSTOCK) ? "bg-green-600" : "bg-zinc-800"
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.ibStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            IB : {product.IBSTOCK || 0}
+            <span> IB :</span> <span> {product.stockId.ibStock || 0}</span>
+          </span>
+        </div>
+        <div className="flex my-1 justify-evenly items-center">
+          <span
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.mainStock ? "bg-green-600" : "bg-zinc-800"
+            }`}
+          >
+            <span> Main :</span> <span> {product.stockId.mainStock || 0}</span>
+          </span>
+          <span
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.smapleLine ? "bg-green-600" : "bg-zinc-800"
+            }`}
+          >
+            <span> SL :</span> <span> {product.stockId.smapleLine || 0}</span>
+          </span>
+          <span
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.godwanStock ? "bg-green-600" : "bg-zinc-800"
+            }`}
+          >
+            <span> GD :</span> <span> {product.stockId.godwanStock || 0}</span>
           </span>
         </div>
       </div>
 
       {/* move from selector */}
 
-      <div className="flex p-2 justify-evenly items-center">
+      <div
+        className={` ${
+          path === "/order" ? "flex" : path === "/cart" ? "flex" : "hidden"
+        }  p-2 justify-evenly items-center`}
+      >
         <div className="flex flex-[1] w-6/12 h-full justify-center items-center gap-1 text-[12px] flex-col">
           Model Town
           <div className="flex">
@@ -219,7 +261,11 @@ const ProductCard: FC<{
 
       {/* cart for model town and GT Road Button */}
 
-      <div className=" flex p-2 justify-evenly items-center">
+      <div
+        className={` ${
+          path === "/order" ? "flex" : path === "/cart" ? "flex" : "hidden"
+        } flex p-2 justify-evenly items-center`}
+      >
         <div className="flex gap-1 text-[12px] text-center flex-col">
           Delhi
           <div className="flex">
