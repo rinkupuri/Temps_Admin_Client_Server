@@ -14,12 +14,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import axios from "axios";
 import { Product } from "@/types/ProductCardTypes";
 
 const Page: FC<{ title: string }> = ({ title }) => {
   const qurry = useSearchParams();
+  const pathName = usePathname();
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const { cart, setCart } = useContext(CartContext);
@@ -27,10 +33,10 @@ const Page: FC<{ title: string }> = ({ title }) => {
   const [limit, setLimit] = useState<number>(100);
   const [brand, setBrand] = useState<Array<{ brand: string }>>([]);
   const [productData, setProductData] = useState<Product[]>();
-  const [brandQuerry, setBrandQuerry] = useState(qurry.get("brand"));
+  const [brandQuerry, setBrandQuerry] = useState(qurry.get("brand") || "all");
 
   useEffect(() => {
-    setBrandQuerry(qurry.get("brand"));
+    setBrandQuerry(qurry.get("brand") || "all");
   }, [qurry]);
 
   useEffect(() => {
@@ -42,7 +48,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
     return () => {
       setProductData([]);
     };
-  }, [page, limit, brandQuerry]);
+  }, [page, limit, brandQuerry, pathName]);
   useEffect(() => {
     axios
       .get(`${process.env.NEXT_PUBLIC_SERVER_URL}/product/brand`)
@@ -64,7 +70,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
             <div className="flex-[1]">
               <Suspense fallback={<div>Loading...</div>}>
                 <Select
-                  value={brandQuerry ? brandQuerry : "all"}
+                  value={brandQuerry ? brandQuerry.replace(/\_/g, " ") : "all"}
                   onValueChange={(e: string) => {
                     const searchParam = new URLSearchParams(qurry.toString());
                     searchParam.set("brand", e.replace(/\s/g, "_"));

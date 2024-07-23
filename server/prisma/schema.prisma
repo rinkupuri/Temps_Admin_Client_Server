@@ -27,13 +27,13 @@ model Stock {
 }
 
 model Product {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  modelName String @unique
-  brand     String
-  image     String
-  mrp       Int
-  totalStock Int @default(0)
-  stockId   Stock?
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  modelName  String @unique
+  brand      String
+  image      String
+  mrp        Int
+  totalStock Int    @default(0)
+  stockId    Stock?
 }
 
 model CartQuantity {
@@ -50,8 +50,9 @@ model CartQuantity {
 }
 
 model Cart {
-  id        String        @id @default(auto()) @map("_id") @db.ObjectId
-  cartId    String        
-  productId String        @unique @db.ObjectId
-  quantity  CartQuantity?
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  cartId       String
+  fromLocation String        @default("")
+  productId    String
+  quantity     CartQuantity?
 }

@@ -1,27 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { parse } from "json2csv";
-import cardData from "@/temp/jsons/cart.json";
 import { HoverBorderGradient } from "./ui/hover-border-gradient";
 import { BiDownload } from "react-icons/bi";
 import path from "path";
+import { cart } from "@/types/ProductCardTypes";
+import axios from "axios";
 
 const ExportButton = () => {
   const exportHandel = async () => {
-    const csvData = parse(
-      cardData.map((value) => {
-        // @ts-ignore
-        value.ModelNo = value.product["Model No."];
-        // @ts-ignore
-        delete value?.product;
-        return value;
+    axios
+      .get(`${process.env.NEXT_PUBLIC_SERVER_URL}/cart/get`, {
+        withCredentials: true,
       })
-    );
-    const blob = new Blob([csvData], { type: "text/csv" });
-    const link = document.createElement("a");
-    link.setAttribute("download", "cart.csv");
-    link.href = URL.createObjectURL(blob);
-    link.click();
-    link.remove();
+      .then((data) => {
+        console.log(data.data.cart);
+
+        const csvData = parse(
+          data.data.cart.map((value: cart) => {
+            // @ts-ignore
+            value["Model Name"] = value.product.modelName;
+            // @ts-ignore
+
+            value["MT Stock"] = value.quantity.mtStock;
+            // @ts-ignore
+
+            value["GT Road Stock"] = value.quantity.ibStock;
+            // @ts-ignore
+
+            value["Dehradun Stock"] = value.quantity.ddnStock;
+            // @ts-ignore
+            value["Delhi Stock"] = value.quantity.dlStock;
+            // @ts-ignore
+            value["Move From"] = value.fromLocation;
+            // @ts-ignore
+
+            delete value?.product;
+            // @ts-ignore
+
+            delete value?.productId;
+            // @ts-ignore
+
+            delete value?.quantity;
+            return value;
+          })
+        );
+        const blob = new Blob([csvData], { type: "text/csv" });
+        const link = document.createElement("a");
+        link.setAttribute("download", "cart.csv");
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        link.remove();
+      });
   };
 
   return (

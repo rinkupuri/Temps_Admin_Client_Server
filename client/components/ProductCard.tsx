@@ -21,7 +21,8 @@ const ProductCard: FC<{
   setCart: (cart: any) => void;
 }> = ({ product, cart, setCart, cartData }) => {
   const path = usePathname();
-  console.log(path);
+
+
   const [cartMTQTY, setCartMTQTY] = useState<number>(
     cartData?.quantity.mtStock || 0
   );
@@ -31,97 +32,48 @@ const ProductCard: FC<{
   const [cartDLQTY, setCartDLQTY] = useState<number>(
     cartData?.quantity.dlStock || 0
   );
+  const [fromLocation, setFromLocation] = useState<string>("");
+
   const [cartDDNQTY, setCartDDNQTY] = useState<number>(
     cartData?.quantity.ddnStock || 0
   );
-  const [fromLocation, setFromLocation] = useState<string>("");
+
+  // add to cart useEffect
 
   useEffect(() => {
-    if (cartMTQTY || cartIBQTY || cartDLQTY || cartDDNQTY || fromLocation)
+    if (
+      product.stockId.mtStock !== cartMTQTY ||
+      product.stockId.ibStock !== cartIBQTY ||
+      product.stockId.dlStock !== cartDLQTY ||
+      product.stockId.ddnStock !== cartDDNQTY ||
+      fromLocation
+    ) {
       (async () => {
-        setCart((prev: any) => {
-          const array = [...prev];
-          const isExits = array.filter(
-            (value) => value.product.modelName === product.modelName
-          );
-          if (isExits.length) {
-            array.map((value) => {
-              if (value.product.modelName === product.modelName) {
-                value.DDNQty = cartDDNQTY;
-                value.DLQty = cartDLQTY;
-                value.IBQty = cartIBQTY;
-                value.MTQty = cartMTQTY;
-                value.MoveFrom = fromLocation;
-              }
-            });
-          } else {
-            console.log([
-              ...prev,
-              {
-                product: {
-                  modelName: product.modelName,
-                  brand: product.brand,
-                  image: product.image,
-                  mrp: product.mrp,
-                  stockId: {
-                    ddnStock: product.stockId.ddnStock,
-                    dlStock: product.stockId.dlStock,
-                    godwanStock: product.stockId.godwanStock,
-                    ibStock: product.stockId.ibStock,
-                    mainStock: product.stockId.mainStock,
-                    mtStock: product.stockId.mtStock,
-                    smapleLine: product.stockId.smapleLine,
-                  },
-                },
-                MTQty: cartMTQTY,
-                IBQty: cartIBQTY,
-                DLQty: cartDLQTY,
-                DDNQty: cartDDNQTY,
-                MoveFrom: fromLocation,
-              },
-            ]);
-            return [
-              ...prev,
-              {
-                product: {
-                  modelName: product.modelName,
-                  brand: product.brand,
-                  image: product.image,
-                  mrp: product.mrp,
-                  stockId: {
-                    ddnStock: product.stockId.ddnStock,
-                    dlStock: product.stockId.dlStock,
-                    godwanStock: product.stockId.godwanStock,
-                    ibStock: product.stockId.ibStock,
-                    mainStock: product.stockId.mainStock,
-                    mtStock: product.stockId.mtStock,
-                    smapleLine: product.stockId.smapleLine,
-                  },
-                },
-                MTQty: cartMTQTY,
-                IBQty: cartIBQTY,
-                DLQty: cartDLQTY,
-                DDNQty: cartDDNQTY,
-                MoveFrom: fromLocation,
-              },
-            ];
+        axios.post(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/cart/addItem`,
+          JSON.stringify({
+            productId: product.id,
+            fromLocation: fromLocation,
+            quantity: {
+              ddnStock: cartDDNQTY,
+              dlStock: cartDLQTY,
+              ibStock: cartIBQTY,
+              godwanStock: 0,
+              mainStock: 0,
+              mtStock: cartMTQTY,
+              smapleLine: 0,
+            },
+          }),
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            withCredentials: true,
           }
-          return [...prev];
-        });
+        );
       })();
-  }, [cartMTQTY, cartIBQTY, cartDLQTY, cartDDNQTY, fromLocation]);
-
-  useEffect(() => {
-    if (cartMTQTY || cartIBQTY || cartDLQTY || cartDDNQTY || fromLocation) {
-      if (cart?.length)
-        axios.post("/api/cart", JSON.stringify(cart), {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
     }
-    return () => {};
-  }, [cart]);
+  }, [cartMTQTY, cartIBQTY, cartDLQTY, cartDDNQTY, fromLocation]);
 
   return (
     <div className=" border-[0.3px] border-zinc-700 my-5 rounded-md flex flex-col">
@@ -213,7 +165,9 @@ const ProductCard: FC<{
           <div className="flex">
             <button
               onClick={() => {
-                cartMTQTY && setCartMTQTY((prev: number) => prev - 1);
+                cartMTQTY &&
+                  cartMTQTY > 1 &&
+                  setCartMTQTY((prev: number) => prev - 1);
               }}
               className={`${
                 cartMTQTY ? "cursor-pointer " : "cursor-not-allowed"
@@ -240,7 +194,17 @@ const ProductCard: FC<{
         </div>
         <div className="flex-[1] flex  w-full h-full justify-center items-center ">
           <Select
-            value={fromLocation}
+            value={
+              fromLocation === "IB"
+                ? "GT Road"
+                : fromLocation === "MT"
+                ? "Model Town"
+                : fromLocation === "DL"
+                ? "Delhi"
+                : fromLocation === "DDN"
+                ? "Dehradun"
+                : ""
+            }
             onValueChange={(e) => setFromLocation(e)}
           >
             <SelectTrigger className="">
@@ -271,7 +235,9 @@ const ProductCard: FC<{
           <div className="flex">
             <button
               onClick={() => {
-                cartDLQTY && setCartDLQTY((prev: number) => prev - 1);
+                cartDLQTY &&
+                  cartDLQTY > 1 &&
+                  setCartDLQTY((prev: number) => prev - 1);
               }}
               className={`${
                 cartDLQTY ? "cursor-pointer " : "cursor-not-allowed"
@@ -300,7 +266,9 @@ const ProductCard: FC<{
           <div className="flex">
             <button
               onClick={() => {
-                cartIBQTY && setCartIBQTY((prev: number) => prev - 1);
+                cartIBQTY &&
+                  cartIBQTY > 1 &&
+                  setCartIBQTY((prev: number) => prev - 1);
               }}
               className={`${
                 cartIBQTY ? "cursor-pointer " : "cursor-not-allowed"
@@ -329,7 +297,9 @@ const ProductCard: FC<{
           <div className="flex">
             <button
               onClick={() => {
-                cartDDNQTY && setCartDDNQTY((prev: number) => prev - 1);
+                cartDDNQTY &&
+                  cartDDNQTY > 1 &&
+                  setCartDDNQTY((prev: number) => prev - 1);
               }}
               className={`${
                 cartDDNQTY ? "cursor-pointer " : "cursor-not-allowed"

@@ -9,6 +9,7 @@ export interface Stock {
 }
 
 export interface Product {
+  id?: string;
   image: string;
   brand: string;
   modelName: string;
@@ -17,6 +18,7 @@ export interface Product {
 }
 
 export interface cart {
-  productId: string;
+  product: Product;
+  fromLocation: string;
   quantity: Stock;
 }

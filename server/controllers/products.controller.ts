@@ -137,6 +137,7 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
     skip:
       (parseInt(page as string) - 1) * (parseInt(limit as string) || 10) || 0, // Default page is 1
     select: {
+      id: true,
       image: true,
       brand: true,
       modelName: true,

@@ -13,8 +13,10 @@ export const checkCartToken = (
 
     // Set the token in the cookies
     res.cookie("cartTokenTemps", tokenGen, {
-      httpOnly: true,
+      // httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true in production
+      maxAge: 3600000, // 1 hour
+      sameSite: "strict",
     });
     token = tokenGen;
 

@@ -12,13 +12,15 @@ const processCSV = async (csvFilePath: string) => {
     let AlreadyExist = 0;
 
     for (const [index, value] of json.entries()) {
-      console.log(value.mrp);
       if (
         !value.modelName ||
-        !value.mrp ||
-        !value.image ||
-        !value.brand ||
-        isNaN(parseInt(value.mrp))
+        !value.main ||
+        !value.smapleLine ||
+        !value.godwan ||
+        !value.ddnStock ||
+        !value.dlStock ||
+        !value.mtStock ||
+        !value.ibStock
       ) {
         // @ts-ignore
         console.log("entered2");

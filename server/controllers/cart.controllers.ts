@@ -6,10 +6,12 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
   const {
     productId,
     quantity,
+    fromLocation,
     cartId,
   }: {
     cartId: string;
     productId: string;
+    fromLocation: string;
     quantity: {
       ddnStock: number;
       dlStock: number;
@@ -22,6 +24,7 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
   } = req.body;
   console.log(cartId);
   if (
+    !fromLocation &&
     !quantity?.ddnStock &&
     !quantity?.dlStock &&
     !quantity?.ibStock &&
@@ -35,19 +38,30 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
       message: "invalid cart qty",
     });
   }
-  const isExist = await prisma.cart.findUnique({
+  const isExist = await prisma.cart.findMany({
     where: {
-      cartId,
-      productId,
+      AND: [
+        {
+          cartId: {
+            equals: cartId,
+          },
+        },
+        {
+          productId: {
+            equals: productId,
+          },
+        },
+      ],
     },
   });
-  if (isExist) {
+  console.log(isExist);
+  if (isExist.length) {
     const cart = await prisma.cart.update({
       where: {
-        cartId,
-        productId,
+        id: isExist[0].id,
       },
       data: {
+        fromLocation,
         quantity: {
           update: {
             ddnStock: quantity.ddnStock,
@@ -61,13 +75,13 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
         },
       },
     });
-
     res.status(201).json({ success: true, cart });
   } else {
     const cart = await prisma.cart.create({
       data: {
-        cartId: cartId,
-        productId: productId,
+        cartId,
+        productId,
+        fromLocation,
         quantity: {
           create: {
             ddnStock: quantity.ddnStock,
@@ -83,12 +97,6 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
     });
     res.status(201).json({ success: true, cart });
   }
-
-  res.status(500).json({
-    success: true,
-    location: "cart",
-    message: "Internal Error Accours",
-  });
 });
 
 export const getCart = AsyncWrapper(async (req: Request, res: Response) => {
@@ -112,5 +120,32 @@ export const getCart = AsyncWrapper(async (req: Request, res: Response) => {
       },
     },
   });
+
+  for (let i = 0; i < cart.length; i++) {
+    const product = await prisma.product.findUnique({
+      where: {
+        id: cart[i].productId,
+      },
+      select: {
+        modelName: true,
+        mrp: true,
+        image: true,
+        brand: true,
+        stockId: {
+          select: {
+            ddnStock: true,
+            dlStock: true,
+            ibStock: true,
+            godwanStock: true,
+            mainStock: true,
+            mtStock: true,
+            smapleLine: true,
+          },
+        },
+      },
+    });
+    // @ts-ignore
+    cart[i].product = product;
+  }
   res.status(200).json({ success: true, cart });
 });
