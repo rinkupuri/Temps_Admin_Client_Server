@@ -7,6 +7,8 @@ import dotEnv from "dotenv";
 import cors from "cors";
 import cartRoute from "./routes/cart.routes";
 const app = express();
+import http from "http";
+const server = http.createServer(app);
 
 // All milddlewares
 app.use(
@@ -35,6 +37,6 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/cart", cartRoute);
 
-app.listen(8000, () => {
+server.listen(process.env.PORT || 80, () => {
   console.log("Server Listinging");
 });
