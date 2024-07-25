@@ -33,9 +33,11 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // product Routes used
+import inventry from "./routes/inventry.routes";
 
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/cart", cartRoute);
+app.use("/api/v1/inventry", inventry);
 
 server.listen(process.env.PORT || 80, () => {
   console.log("Server Listinging");

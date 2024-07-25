@@ -3,72 +3,51 @@ const { parentPort, workerData } = require("worker_threads");
 const csvtojson = require("csvtojson");
 const fs = require("fs");
 
-const processCSV = async (csvFilePath: string) => {
+const processCSV = async (csvFilePath) => {
   try {
     const csvData = await fs.promises.readFile(csvFilePath, "utf-8");
     const json = await csvtojson().fromString(csvData);
     const errorArray = [];
-    let succesfullyCreate = 0;
-    let AlreadyExist = 0;
+    let succesfullyUpadte = 0;
+    let NotExist = 0;
 
     for (const [index, value] of json.entries()) {
-      if (
-        !value.modelName ||
-        !value.main ||
-        !value.smapleLine ||
-        !value.godwan ||
-        !value.ddnStock ||
-        !value.dlStock ||
-        !value.mtStock ||
-        !value.ibStock
-      ) {
-        // @ts-ignore
-        console.log("entered2");
-        errorArray.push({
-          lineNumber: index + 2,
-          error: "Data in not compelte",
-        });
-        continue;
-      }
       const isExist = await prismaClient.product.findUnique({
         where: { modelName: value.modelName },
       });
-      if (isExist) {
-        AlreadyExist += 1;
+      if (!isExist) {
+        NotExist += 1;
         continue;
       }
-      await prismaClient.product.create({
+      await prismaClient.product.update({
+        where: { id: isExist.id },
         data: {
-          brand: value.brand,
-          modelName: value.modelName,
-          mrp: parseInt(value.mrp),
-          image: value.image,
           stockId: {
-            create: {
-              ddnStock: 0,
-              dlStock: 0,
-              godwanStock: 0,
-              ibStock: 0,
-              mainStock: 0,
-              mtStock: 0,
-              smapleLine: 0,
+            update: {
+              ddnStock: parseInt(value.ddnStock) || 0,
+              dlStock: parseInt(value.dlStock) || 0,
+              godwanStock: parseInt(value.godwan) || 0,
+              ibStock: parseInt(value.ibStock) || 0,
+              mainStock: parseInt(value.main) || 0,
+              mtStock: parseInt(value.mtStock) || 0,
+              smapleLine: parseInt(value.smapleLine) || 0,
             },
           },
         },
       });
 
-      succesfullyCreate += 1;
+      succesfullyUpadte += 1;
     }
 
     fs.unlinkSync(workerData.csvFilePath);
     return {
-      succesfullyCreate,
-      AlreadyExist,
+      succesfullyUpadte,
+      NotExist,
       errorArray,
     };
   } catch (error) {
     console.log({
-      location: "Product Worker",
+      location: "Inventry Worker",
       error: error.message,
     });
   }

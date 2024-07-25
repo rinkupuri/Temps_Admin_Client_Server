@@ -3,20 +3,20 @@ import path from "path";
 import { Worker } from "worker_threads";
 
 export const updateInventryData = async (req: Request, res: Response) => {
+  console.log(req.file.path);
   const worker = new Worker(
     path.resolve(__dirname, "../Workers/inventry.worker.ts"),
     {
       workerData: { csvFilePath: req.file.path },
     }
   );
-  Worker.on("message", (result) => {
+  worker.on("message", (result) => {
     if (result?.error) {
       res.status(500).json({ error: result.error });
     } else {
       res.status(200).json(result);
     }
   });
-
   worker.on("error", (error) => {
     console.error("Worker error:", error);
     res.status(500).json({ error: "An error occurred in the worker thread." });
