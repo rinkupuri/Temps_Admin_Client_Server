@@ -119,17 +119,7 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
       AND: [
         { brand: whereQuerry },
         {
-          stockId: {
-            OR: [
-              { ddnStock: { gt: 0 } },
-              { dlStock: { gt: 0 } },
-              { godwanStock: { gt: 0 } },
-              { ibStock: { gt: 0 } },
-              { mainStock: { gt: 0 } },
-              { mtStock: { gt: 0 } },
-              { smapleLine: { gt: 0 } },
-            ],
-          },
+          totalStock: { gt: 0 },
         },
       ],
     },
@@ -141,8 +131,8 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
       image: true,
       brand: true,
       modelName: true,
+      totalStock: true,
       mrp: true,
-
       stockId: {
         select: {
           ddnStock: true,
@@ -209,6 +199,7 @@ export const getBrands = AsyncWrapper(async (req: Request, res: Response) => {
     },
     distinct: ["brand"],
   });
+
   res.status(200).json({
     success: true,
     message: "Brands fetched",

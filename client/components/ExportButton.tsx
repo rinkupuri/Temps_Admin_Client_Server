@@ -7,14 +7,14 @@ import { cart } from "@/types/ProductCardTypes";
 import axios from "axios";
 
 const ExportButton = () => {
+  // export excel function
+
   const exportHandel = async () => {
     axios
       .get(`${process.env.NEXT_PUBLIC_SERVER_URL}/cart/get`, {
         withCredentials: true,
       })
       .then((data) => {
-        console.log(data.data.cart);
-
         const csvData = parse(
           data.data.cart.map((value: cart) => {
             // @ts-ignore
@@ -38,6 +38,9 @@ const ExportButton = () => {
             // @ts-ignore
 
             delete value?.productId;
+            // @ts-ignore
+
+            delete value?.fromLocation;
             // @ts-ignore
 
             delete value?.quantity;

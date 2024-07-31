@@ -22,7 +22,6 @@ const ProductCard: FC<{
 }> = ({ product, cart, setCart, cartData }) => {
   const path = usePathname();
 
-
   const [cartMTQTY, setCartMTQTY] = useState<number>(
     cartData?.quantity.mtStock || 0
   );
@@ -32,22 +31,16 @@ const ProductCard: FC<{
   const [cartDLQTY, setCartDLQTY] = useState<number>(
     cartData?.quantity.dlStock || 0
   );
-  const [fromLocation, setFromLocation] = useState<string>("");
+  const [fromLocation, setFromLocation] = useState<string>(
+    cartData?.fromLocation || ""
+  );
 
   const [cartDDNQTY, setCartDDNQTY] = useState<number>(
     cartData?.quantity.ddnStock || 0
   );
 
-  // add to cart useEffect
-
   useEffect(() => {
-    if (
-      product.stockId.mtStock !== cartMTQTY ||
-      product.stockId.ibStock !== cartIBQTY ||
-      product.stockId.dlStock !== cartDLQTY ||
-      product.stockId.ddnStock !== cartDDNQTY ||
-      fromLocation
-    ) {
+    if (cartMTQTY || cartIBQTY || cartDLQTY || cartDDNQTY) {
       (async () => {
         axios.post(
           `${process.env.NEXT_PUBLIC_SERVER_URL}/cart/addItem`,
@@ -76,7 +69,7 @@ const ProductCard: FC<{
   }, [cartMTQTY, cartIBQTY, cartDLQTY, cartDDNQTY, fromLocation]);
 
   return (
-    <div className=" border-[0.3px] border-zinc-700 my-5 rounded-md flex flex-col">
+    <div className=" border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
       <img
         className="object-contain rounded-t-md w-full h-auto"
         src={product.image}
@@ -92,7 +85,7 @@ const ProductCard: FC<{
       <div className="flex flex-col w-full">
         <div className="flex my-1 justify-evenly items-center">
           <span className="text-[12px] flex w-full justify-center items-center">
-            Stock : {product.mrp || 0}
+            Stock : {product.totalStock || 0}
           </span>
           <span className="text-[12px] flex w-full justify-center items-center">
             MRP : {product.mrp}
@@ -194,18 +187,34 @@ const ProductCard: FC<{
         </div>
         <div className="flex-[1] flex  w-full h-full justify-center items-center ">
           <Select
-            value={
-              fromLocation === "IB"
-                ? "GT Road"
-                : fromLocation === "MT"
-                ? "Model Town"
-                : fromLocation === "DL"
-                ? "Delhi"
-                : fromLocation === "DDN"
-                ? "Dehradun"
-                : ""
-            }
-            onValueChange={(e) => setFromLocation(e)}
+            value={fromLocation}
+            onValueChange={(e) => {
+              setFromLocation(e);
+              (async () => {
+                axios.post(
+                  `${process.env.NEXT_PUBLIC_SERVER_URL}/cart/addItem`,
+                  JSON.stringify({
+                    productId: product.id,
+                    fromLocation: e,
+                    quantity: {
+                      ddnStock: cartDDNQTY,
+                      dlStock: cartDLQTY,
+                      ibStock: cartIBQTY,
+                      godwanStock: 0,
+                      mainStock: 0,
+                      mtStock: cartMTQTY,
+                      smapleLine: 0,
+                    },
+                  }),
+                  {
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    withCredentials: true,
+                  }
+                );
+              })();
+            }}
           >
             <SelectTrigger className="">
               <SelectValue placeholder="Move Form" />

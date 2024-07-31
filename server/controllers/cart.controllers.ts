@@ -107,6 +107,7 @@ export const getCart = AsyncWrapper(async (req: Request, res: Response) => {
     },
     select: {
       productId: true,
+      fromLocation: true,
       quantity: {
         select: {
           ddnStock: true,

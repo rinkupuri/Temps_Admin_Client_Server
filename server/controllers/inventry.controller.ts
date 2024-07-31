@@ -3,7 +3,6 @@ import path from "path";
 import { Worker } from "worker_threads";
 
 export const updateInventryData = async (req: Request, res: Response) => {
-  console.log(req.file.path);
   const worker = new Worker(
     path.resolve(__dirname, "../Workers/inventry.worker.ts"),
     {

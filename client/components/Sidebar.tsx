@@ -6,6 +6,7 @@ import { FaSalesforce } from "react-icons/fa";
 import { GrOrderedList } from "react-icons/gr";
 import { SiGooglesheets } from "react-icons/si";
 
+
 const Page = () => {
   const menus = [
     { name: "Products", url: "/products", icon: <AiFillProduct size={15} /> },
@@ -14,7 +15,7 @@ const Page = () => {
     { name: "Purchase", url: "/purchase", icon: <BiPurchaseTag size={15} /> },
     {
       name: "Image Sheet",
-      url: "/gen-sheets",
+      url: "/sheets",
       icon: <SiGooglesheets size={15} />,
     },
   ];

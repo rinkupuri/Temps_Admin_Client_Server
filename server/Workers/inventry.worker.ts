@@ -11,9 +11,15 @@ const processCSV = async (csvFilePath) => {
     let succesfullyUpadte = 0;
     let NotExist = 0;
 
+
     for (const [index, value] of json.entries()) {
+      if (!parseInt(value["Total"])) {
+        console.log(true);
+        continue;
+      }
+      console.log(value["Model No."]);
       const isExist = await prismaClient.product.findUnique({
-        where: { modelName: value.modelName },
+        where: { modelName: value["Model No."] },
       });
       if (!isExist) {
         NotExist += 1;
@@ -21,18 +27,18 @@ const processCSV = async (csvFilePath) => {
       }
       await prismaClient.product.update({
         where: { id: isExist.id },
+        data: { totalStock: parseInt(value["Total"]) || 0 },
+      });
+      await prismaClient.stock.update({
+        where: { productId: isExist.id },
         data: {
-          stockId: {
-            update: {
-              ddnStock: parseInt(value.ddnStock) || 0,
-              dlStock: parseInt(value.dlStock) || 0,
-              godwanStock: parseInt(value.godwan) || 0,
-              ibStock: parseInt(value.ibStock) || 0,
-              mainStock: parseInt(value.main) || 0,
-              mtStock: parseInt(value.mtStock) || 0,
-              smapleLine: parseInt(value.smapleLine) || 0,
-            },
-          },
+          ddnStock: parseInt(value["DDN Stock"]) || 0,
+          dlStock: parseInt(value["DL Stock"]) || 0,
+          godwanStock: parseInt(value["Godwan"]) || 0,
+          ibStock: parseInt(value["IB Stock"]) || 0,
+          mainStock: parseInt(value["Main"]) || 0,
+          mtStock: parseInt(value["MT Stock"]) || 0,
+          smapleLine: parseInt(value["Sample Line"]) || 0,
         },
       });
 

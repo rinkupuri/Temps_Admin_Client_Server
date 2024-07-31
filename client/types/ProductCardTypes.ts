@@ -14,6 +14,7 @@ export interface Product {
   brand: string;
   modelName: string;
   mrp: number;
+  totalStock: number;
   stockId: Stock;
 }
 
