@@ -8,7 +8,7 @@ import cartRoute from "./routes/cart.routes";
 const app = express();
 import http from "http";
 import inventry from "./routes/inventry.routes";
-import { inventryCorn } from "./cron/inventry.cron";
+import { serverAliveCron } from "./cron/inventry.cron";
 import exportSheet from "./routes/export.routes";
 import path from "path";
 const server = http.createServer(app);
@@ -27,7 +27,7 @@ app.use(
 
 dotEnv.config();
 connectDB();
-inventryCorn();
+serverAliveCron();
 
 // Use body-parser middleware to parse JSON and urlencoded form data
 app.use(express.json());
