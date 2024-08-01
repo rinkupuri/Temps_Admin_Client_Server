@@ -35,7 +35,6 @@ export default function CardWithForm() {
     if (link) {
       console.log(link);
       const linkButton = document.createElement("a");
-      linkButton.target = "_blank";
       linkButton.href = link;
       linkButton.click();
       linkButton.remove();
