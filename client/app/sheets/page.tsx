@@ -22,6 +22,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export default function CardWithForm() {
+  const [sheet, setSheet] = useState("");
+  const [brandName, setBrandName] = useState("");
   const [brand, setBrand] = useState<
     Array<{
       brand: string;
@@ -50,11 +52,20 @@ export default function CardWithForm() {
             <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Sheet Name</Label>
-                <Input id="name" placeholder="Name of your project" />
+                <Input
+                  onChange={(e) => setSheet(e.target.value)}
+                  id="name"
+                  placeholder="Name of your project"
+                  value={sheet}
+                />
               </div>
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="framework">Brand</Label>
-                <Select>
+                <Select
+                  onValueChange={(e: string) => {
+                    setBrandName(e);
+                  }}
+                >
                   <SelectTrigger id="framework">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
@@ -70,7 +81,19 @@ export default function CardWithForm() {
         </CardContent>
         <CardFooter className="flex justify-between">
           <Button variant="outline">Without Image</Button>
-          <Button>With Image</Button>
+          <Button
+            onClick={() => {
+              axios
+                .post(
+                  `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/export?sheetName=${sheet}&brandName=${brandName}`
+                )
+                .then((res) => {
+                  window.open(res.data.link);
+                });
+            }}
+          >
+            With Image
+          </Button>
         </CardFooter>
       </Card>
     </div>

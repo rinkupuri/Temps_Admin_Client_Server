@@ -206,3 +206,33 @@ export const getBrands = AsyncWrapper(async (req: Request, res: Response) => {
     brands,
   });
 });
+
+
+export const allProductExport = AsyncWrapper(
+  async (req: Request, res: Response) => {
+    const worker = new Worker(
+      path.resolve(__dirname, "../Workers/productExport.worker.ts")
+    );
+    worker.on("message", (result) => {
+      if (result?.error) {
+        res.status(500).json({ error: result });
+      } else {
+        res.status(200).json(result);
+      }
+    });
+
+    worker.on("error", (error) => {
+      console.error("Worker error:", error);
+      res
+        .status(500)
+        .json({ error: "An error occurred in the worker thread." });
+    });
+
+    worker.on("exit", (code) => {
+      if (code !== 0) {
+        console.error(`Worker stopped with exit code ${code}`);
+        res.status(500).json({ error: "Worker stopped with an error." });
+      }
+    });
+  }
+);

@@ -61,7 +61,7 @@ const exportCsv = async ({ workerData }) => {
   });
   console.log("check");
   await workbook.xlsx.writeFile(
-    `./public/csv/${sheetName.replace(/\s/g, " ")}.xlsx`
+    `./public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`
   );
 };
 
@@ -73,7 +73,7 @@ exportCsv({ workerData })
         message: "Exported successfully",
         link: `${process.env.HOST_URL}/csv/${workerData.sheetName.replace(
           /\s/g,
-          " "
+          "_"
         )}.xlsx`,
       });
     }
