@@ -24,11 +24,18 @@ import { useEffect, useState } from "react";
 export default function CardWithForm() {
   const [sheet, setSheet] = useState("");
   const [brandName, setBrandName] = useState("");
+  const [link, setLink] = useState("");
   const [brand, setBrand] = useState<
     Array<{
       brand: string;
     }>
   >([]);
+
+  useEffect(() => {
+    if (link) {
+      window.open(link);
+    }
+  }, [link]);
 
   useEffect(() => {
     axios
@@ -90,11 +97,7 @@ export default function CardWithForm() {
                   `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/export?sheetName=${sheet}&brandName=${brandName}`
                 )
                 .then((res) => {
-                   const link = document.createElement("a");
-                   link.href = `${res.data.link}`;
-                   link.target = "_blank";
-                   link.click();
-                   link.remove();
+                  setLink(res.data.link);
                 });
             }}
           >
