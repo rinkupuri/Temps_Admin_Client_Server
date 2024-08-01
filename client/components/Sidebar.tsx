@@ -9,26 +9,30 @@ import { SiGooglesheets } from "react-icons/si";
 
 const Page = () => {
   const menus = [
-    { name: "Products", url: "/products", icon: <AiFillProduct size={15} /> },
-    { name: "Orders", url: "/order", icon: <GrOrderedList size={15} /> },
-    { name: "Sale", url: "/sale", icon: <FaSalesforce size={15} /> },
-    { name: "Purchase", url: "/purchase", icon: <BiPurchaseTag size={15} /> },
+    { name: "Products", url: "/products", icon: <AiFillProduct size={20} /> },
+    { name: "Orders", url: "/order", icon: <GrOrderedList size={20} /> },
     {
       name: "Image Sheet",
       url: "/sheets",
-      icon: <SiGooglesheets size={15} />,
+      icon: <SiGooglesheets size={20} />,
     },
   ];
   return (
-    <div className="flex flex-col w-full mt-4 gap-2 items-center h-full">
+    <div className="flex md:flex-col bg-black justify-between md:justify-start overflow-x-scroll md:overflow-hidden w-full md:mt-4 gap-2 items-center h-full">
       {menus.map((value, index) => (
         <Link
           key={index}
-          className="flex w-10/12 text-[14px] items-center cursor-pointer hover:bg-zinc-900 text-white py-2 px-4 rounded-md gap-1"
+          className="flex md:w-10/12 h-full md:h-[40px] justify-center md:justify-start text-[14px] items-center cursor-pointer hover:bg-zinc-900 text-white py-2 px-4 rounded-md gap-1"
           href={value.url}
         >
-          {value.icon}
-          {value.name}
+          <span className="h-full flex justify-center items-center !text-[20px]">
+            {" "}
+            {value.icon}
+          </span>
+          <span className="h-full flex justify-center items-center">
+            {" "}
+            {value.name}
+          </span>
         </Link>
       ))}
     </div>
