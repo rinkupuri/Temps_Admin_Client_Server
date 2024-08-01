@@ -33,7 +33,12 @@ export default function CardWithForm() {
 
   useEffect(() => {
     if (link) {
-      window.open(link);
+      console.log(link);
+      const linkButton = document.createElement("a");
+      linkButton.target = "_blank";
+      linkButton.href = link;
+      linkButton.click();
+      linkButton.remove();
     }
   }, [link]);
 
