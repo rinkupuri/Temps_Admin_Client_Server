@@ -15,6 +15,7 @@ export const checkCartToken = (
     res.cookie("cartTokenTemps", tokenGen, {
       // httpOnly: true,
       secure: process.env.NODE_ENV === "production", // Set to true in production
+      sameSite: "none", // Set to true in production
     });
     token = tokenGen;
 
