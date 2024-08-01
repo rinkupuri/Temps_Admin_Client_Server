@@ -71,7 +71,9 @@ export default function CardWithForm() {
                   </SelectTrigger>
                   <SelectContent position="popper">
                     {brand.map((item, index) => (
-                      <SelectItem value={item.brand}>{item.brand}</SelectItem>
+                      <SelectItem key={index} value={item.brand}>
+                        {item.brand}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
