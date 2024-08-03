@@ -56,7 +56,7 @@ export const productImport = () => {
     await fs.writeFileSync("csv/Versace.csv", Versace);
   });
 
-  cron.schedule("0 2 * * *", async () => {
+  cron.schedule("*/30 * * * *", async () => {
     // Just cavalli Worker
     const worker = new Worker("./Workers/product.worker.ts", {
       workerData: { csvFilePath: "csv/Just_Cavalli.csv" },
