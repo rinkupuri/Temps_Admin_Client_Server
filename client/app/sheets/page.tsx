@@ -36,7 +36,6 @@ export default function CardWithForm() {
     if (link) {
       const linkButton = document.createElement("a");
       linkButton.href = link;
-      setLoading(false);
       linkButton.click();
       linkButton.remove();
     }
@@ -105,7 +104,11 @@ export default function CardWithForm() {
                     `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/export?sheetName=${sheet}&brandName=${brandName}`
                   )
                   .then((res) => {
+                    setLoading(false);
                     setLink(res.data.link);
+                    if (!res.data.link) {
+                      alert("Something went wrong Please Contact to Developer");
+                    }
                   });
               }}
             >
