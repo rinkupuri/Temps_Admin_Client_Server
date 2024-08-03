@@ -45,33 +45,45 @@ export const createProduct = AsyncWrapper(
 );
 
 // bulk product Create Route
-
 export const createProductCSV = async (req: Request, res: Response) => {
-  const worker = new Worker(
-    path.resolve(__dirname, "../Workers/product.worker.ts"),
-    {
-      workerData: { csvFilePath: req.file.path },
-    }
-  );
-  worker.on("message", (result) => {
-    if (result?.error) {
-      res.status(500).json({ error: result.error });
-    } else {
+  try {
+    const worker = new Worker(
+      path.resolve(__dirname, "../Workers/product.worker.ts"),
+      { workerData: { csvFilePath: req.file.path } }
+    );
+
+    worker.on("message", (result) => {
+      if (result?.error) {
+        // Handle known errors from the worker
+        return res.status(500).json({ error: result.error });
+      }
+      // Send successful result
       res.status(200).json(result);
-    }
-  });
+    });
 
-  worker.on("error", (error) => {
-    console.error("Worker error:", error);
-    res.status(500).json({ error: "An error occurred in the worker thread." });
-  });
+    worker.on("error", (error) => {
+      console.error("Worker error:", error);
+      // Handle unexpected errors
+      res
+        .status(500)
+        .json({ error: "An error occurred in the worker thread." });
+    });
 
-  worker.on("exit", (code) => {
-    if (code !== 0) {
-      console.error(`Worker stopped with exit code ${code}`);
-      res.status(500).json({ error: "Worker stopped with an error." });
-    }
-  });
+    worker.on("exit", (code) => {
+      if (code !== 0) {
+        console.error(`Worker stopped with exit code ${code}`);
+        // Handle worker exit with non-zero status code
+        res.status(500).json({ error: "Worker stopped with an error." });
+      }
+      // Optionally handle successful completion if needed
+    });
+
+    // Ensure the response is only sent once, after worker completion or error
+  } catch (error) {
+    // Handle errors that occur while setting up the worker
+    console.error("Error creating worker:", error);
+    res.status(500).json({ error: "Failed to start the worker thread." });
+  }
 };
 
 export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
