@@ -1,7 +1,5 @@
 import axios from "axios";
 import cron from "node-cron";
-import path from "path";
-import { Worker } from "worker_threads";
 
 
 

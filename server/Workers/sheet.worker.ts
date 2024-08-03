@@ -59,7 +59,6 @@ const exportCsv = async ({ workerData }) => {
       editAs: "oneCell",
     });
   });
-  console.log("check");
   await workbook.xlsx.writeFile(
     `./public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`
   );

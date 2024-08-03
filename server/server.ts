@@ -11,7 +11,9 @@ import inventry from "./routes/inventry.routes";
 import { serverAliveCron } from "./cron/inventry.cron";
 import exportSheet from "./routes/export.routes";
 import path from "path";
+import { productImport } from "./cron/product.cron";
 const server = http.createServer(app);
+import { Worker } from "worker_threads";
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/csv", express.static(path.join(__dirname, "public/csv")));
@@ -28,6 +30,7 @@ app.use(
 dotEnv.config();
 connectDB();
 serverAliveCron();
+productImport();
 
 // Use body-parser middleware to parse JSON and urlencoded form data
 app.use(express.json());
@@ -38,6 +41,12 @@ app.use(cookieParser());
 app.get("/", (req: Request, res: Response) => {
   res.status(200).send("Welcome to Temps APi");
 });
+
+
+
+
+
+
 
 // product Routes used
 

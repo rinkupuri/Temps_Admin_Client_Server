@@ -16,6 +16,7 @@ export const exportSheet = AsyncWrapper(async (req: Request, res: Response) => {
   );
 
   worker.on("message", (message) => {
+    console.log(message);
     res.status(200).json(message);
   });
   worker.on("error", (error) => {

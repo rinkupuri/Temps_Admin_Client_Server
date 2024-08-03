@@ -26,11 +26,9 @@ const Page = () => {
           href={value.url}
         >
           <span className="h-full flex justify-center items-center !text-[20px]">
-            {" "}
             {value.icon}
           </span>
           <span className="h-full flex justify-center items-center">
-            {" "}
             {value.name}
           </span>
         </Link>
