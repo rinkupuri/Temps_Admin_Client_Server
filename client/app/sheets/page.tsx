@@ -25,6 +25,7 @@ export default function CardWithForm() {
   const [sheet, setSheet] = useState("");
   const [brandName, setBrandName] = useState("");
   const [link, setLink] = useState("");
+  const [loading, setLoading] = useState(false);
   const [brand, setBrand] = useState<
     Array<{
       brand: string;
@@ -33,9 +34,9 @@ export default function CardWithForm() {
 
   useEffect(() => {
     if (link) {
-      console.log(link);
       const linkButton = document.createElement("a");
       linkButton.href = link;
+      setLoading(false);
       linkButton.click();
       linkButton.remove();
     }
@@ -50,65 +51,76 @@ export default function CardWithForm() {
   }, []);
 
   return (
-    <div className="flex w-full h-screen justify-center items-center">
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle>Export Sheets</CardTitle>
-          <CardDescription>
-            Export all brand image sheet with stock
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="name">Sheet Name</Label>
-                <Input
-                  onChange={(e) => setSheet(e.target.value)}
-                  id="name"
-                  placeholder="Name of your project"
-                  value={sheet}
-                />
+    <>
+      <div className="flex w-full h-screen justify-center items-center">
+        <Card className="w-[350px]">
+          <CardHeader>
+            <CardTitle>Export Sheets</CardTitle>
+            <CardDescription>
+              Export all brand image sheet with stock
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form>
+              <div className="grid w-full items-center gap-4">
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="name">Sheet Name</Label>
+                  <Input
+                    onChange={(e) => setSheet(e.target.value)}
+                    id="name"
+                    placeholder="Name of your project"
+                    value={sheet}
+                  />
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="framework">Brand</Label>
+                  <Select
+                    onValueChange={(e: string) => {
+                      setBrandName(e);
+                    }}
+                  >
+                    <SelectTrigger id="framework">
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent position="popper">
+                      {brand.map((item, index) => (
+                        <SelectItem key={index} value={item.brand}>
+                          {item.brand}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="framework">Brand</Label>
-                <Select
-                  onValueChange={(e: string) => {
-                    setBrandName(e);
-                  }}
-                >
-                  <SelectTrigger id="framework">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {brand.map((item, index) => (
-                      <SelectItem key={index} value={item.brand}>
-                        {item.brand}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline">Without Image</Button>
-          <Button
-            onClick={() => {
-              axios
-                .post(
-                  `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/export?sheetName=${sheet}&brandName=${brandName}`
-                )
-                .then((res) => {
-                  setLink(res.data.link);
-                });
-            }}
-          >
-            With Image
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+            </form>
+          </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline">Without Image</Button>
+            <Button
+              onClick={() => {
+                setLoading(true);
+                setLink("");
+                axios
+                  .post(
+                    `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/export?sheetName=${sheet}&brandName=${brandName}`
+                  )
+                  .then((res) => {
+                    setLink(res.data.link);
+                  });
+              }}
+            >
+              With Image
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+      {loading && (
+        <div className="absolute top-0 bg-black/10 left-0 w-full h-full flex justify-center items-center">
+          <div className="flex bg-white rounded-sm justify-center items-center w-20 h-20">
+            <div className="animate-spin rounded-full h-10 w-10 border-4 border-dotted border-gray-900"></div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

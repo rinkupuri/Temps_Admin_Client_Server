@@ -37,28 +37,36 @@ const exportCsv = async ({ workerData }) => {
     { header: "MRP", key: "email", width: 10 },
   ];
 
-  product.map((item, index) => {
+  for (const [index, item] of product.entries()) {
     console.log(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`);
-    const imageId = workbook.addImage({
-      filename: `${item.image.replace(`${process.env.HOST_URL}/`, "")}`,
-      extension: "png",
-    });
-    const row = worksheet.addRow({
-      id: item.modelName,
-      name: item.brand,
-      email: item.mrp,
-    });
-    row.height = 185;
+    try {
+      const imageId = workbook.addImage({
+        filename: `${item.image.replace(`${process.env.HOST_URL}/`, "")}`,
+        extension: "png",
+      });
+      const row = worksheet.addRow({
+        id: item.modelName,
+        name: item.brand,
+        email: item.mrp,
+      });
+      row.height = 185;
 
-    worksheet.addImage(imageId, {
-      // @ts-ignore
-      tl: { col: 0.5, row: index + 1.05 },
-      // @ts-ignore
-      ext: { height: 180, width: 180 },
+      worksheet.addImage(imageId, {
+        // @ts-ignore
+        tl: { col: 0.5, row: index + 1.05 },
+        // @ts-ignore
+        ext: { height: 180, width: 180 },
 
-      editAs: "oneCell",
-    });
-  });
+        editAs: "oneCell",
+      });
+    } catch (error) {
+      console.log({
+        error,
+        location: "Sheet Export Worker",
+      });
+      continue;
+    }
+  }
   await workbook.xlsx.writeFile(
     `./public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`
   );
