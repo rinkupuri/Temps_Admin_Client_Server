@@ -49,7 +49,7 @@ const processCSV = async (csvFilePath) => {
         const filePath = path.join(
           __dirname,
           `../images/${brand.trim().replace(/\s/g, "_").toLowerCase()}`,
-          imageName
+          `${modelName}.png`
         );
         const directoryPath = path.dirname(filePath);
 
@@ -78,7 +78,7 @@ const processCSV = async (csvFilePath) => {
                 ibStock: 0,
                 mainStock: 0,
                 mtStock: 0,
-                sampleLine: 0, // Fixed typo here
+                smapleLine: 0,
               },
             },
           },
@@ -86,6 +86,7 @@ const processCSV = async (csvFilePath) => {
 
         successfullyCreated += 1;
       } catch (error) {
+        console.error(`Error processing line ${index + 2}:`, error.message);
         errorArray.push({ lineNumber: index + 2, error: error.message });
       }
     }
@@ -100,11 +101,10 @@ const processCSV = async (csvFilePath) => {
       errorArray,
     };
   } catch (error) {
-    console.error("Error processing CSV:", error.message);
     return {
       successfullyCreated: 0,
       alreadyExist: 0,
-      errorArray: [{ lineNumber: -1, error: error.message }],
+      errorArray: error.message,
     };
   }
 };

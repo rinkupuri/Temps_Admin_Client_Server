@@ -3,7 +3,7 @@ import { downloadAndSaveCSV, runWorker } from "../functions/cron.functions";
 import { urlsAndPaths, workerDataArray } from "../Data/cron.array";
 
 export const productImport = () => {
-  cron.schedule("*/29 * * * *", async () => {
+  cron.schedule("* * * * *", async () => {
     try {
       await Promise.all(
         urlsAndPaths.map(({ url, filePath }) =>
@@ -16,7 +16,7 @@ export const productImport = () => {
     }
   });
 
-  cron.schedule("*/30 * * * *", async () => {
+  cron.schedule("* * * * *", async () => {
     runWorkersSequentially()
       .then(() => {
         console.log("All workers have completed.");
