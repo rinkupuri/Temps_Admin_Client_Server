@@ -10,13 +10,15 @@ const processCSV = async (csvFilePath) => {
 
   try {
     // Read and parse CSV file
-    const csvData = await fs.promises.readFile(csvFilePath, "utf-8");
+    const csvData = await fs.promises.readFile(
+      path.resolve(csvFilePath),
+      "utf-8"
+    );
     const json = await csvtojson().fromString(csvData);
     const errorArray = [];
     let successfullyCreated = 0;
     let alreadyExist = 0;
 
-    console.log(json);
 
     for (const [index, value] of json.entries()) {
       const { modelName, image, mrp, brand } = value;

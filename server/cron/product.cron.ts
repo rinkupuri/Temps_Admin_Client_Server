@@ -1,13 +1,14 @@
 import cron from "node-cron";
 import { downloadAndSaveCSV, runWorker } from "../functions/cron.functions";
 import { urlsAndPaths, workerDataArray } from "../Data/cron.array";
+import path from "path";
 
 export const productImport = () => {
-  cron.schedule("*/25 * * * *", async () => {
+  cron.schedule("*/10 * * * *", async () => {
     try {
       await Promise.all(
         urlsAndPaths.map(({ url, filePath }) =>
-          downloadAndSaveCSV(url, filePath)
+          downloadAndSaveCSV(url, path.resolve(filePath))
         )
       );
       console.log("All CSV files downloaded and saved.");
