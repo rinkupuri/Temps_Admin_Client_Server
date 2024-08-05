@@ -1,3 +1,5 @@
+const path = require("path");
+
 const prismaClient = require("../prisma/PrismaClientWorker.ts");
 const ExcelJs = require("exceljs");
 const { workerData, parentPort } = require("worker_threads");
@@ -68,7 +70,7 @@ const exportCsv = async ({ workerData }) => {
     }
   }
   await workbook.xlsx.writeFile(
-    `./public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`
+    path.resolve(`public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
   );
 };
 
