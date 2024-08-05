@@ -8,12 +8,12 @@ import cartRoute from "./routes/cart.routes";
 const app = express();
 import http from "http";
 import inventry from "./routes/inventry.routes";
-import { serverAliveCron } from "./cron/inventry.cron";
+import { serverAliveCron } from "./cron/health";
 import exportSheet from "./routes/export.routes";
 import path from "path";
 import { productImport } from "./cron/product.cron";
+import { inventryCorn } from "./cron/inventry.cron";
 const server = http.createServer(app);
-import { Worker } from "worker_threads";
 
 app.use("/images", express.static(path.join(__dirname, "images")));
 app.use("/csv", express.static(path.join(__dirname, "public/csv")));
@@ -30,6 +30,7 @@ app.use(
 dotEnv.config();
 connectDB();
 serverAliveCron();
+inventryCorn();
 productImport();
 
 // Use body-parser middleware to parse JSON and urlencoded form data

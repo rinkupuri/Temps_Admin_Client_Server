@@ -4,7 +4,7 @@ import { urlsAndPaths, workerDataArray } from "../Data/cron.array";
 import path from "path";
 
 export const productImport = () => {
-  cron.schedule("*/10 * * * *", async () => {
+  cron.schedule("*/140 * * * *", async () => {
     try {
       await Promise.all(
         urlsAndPaths.map(({ url, filePath }) =>
@@ -17,7 +17,7 @@ export const productImport = () => {
     }
   });
 
-  cron.schedule("*/30 * * * *", async () => {
+  cron.schedule("*/160 * * * *", async () => {
     runWorkersSequentially()
       .then(() => {
         console.log("All workers have completed.");

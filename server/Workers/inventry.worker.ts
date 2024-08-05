@@ -14,15 +14,14 @@ const processCSV = async (csvFilePath) => {
 
     for (const [index, value] of json.entries()) {
       if (!parseInt(value["Total"])) {
-        console.log(true);
         continue;
       }
-      console.log(value["Model No."]);
       const isExist = await prismaClient.product.findUnique({
         where: { modelName: value["Model No."] },
       });
       if (!isExist) {
         NotExist += 1;
+        console.log(value["Model No."]);
         continue;
       }
       await prismaClient.product.update({

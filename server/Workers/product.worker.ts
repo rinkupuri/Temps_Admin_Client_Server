@@ -100,13 +100,13 @@ const processCSV = async (csvFilePath) => {
     return {
       successfullyCreated,
       alreadyExist,
-      errorArray,
+      errorArray : JSON.stringify(errorArray),
     };
   } catch (error) {
     return {
       successfullyCreated: 0,
       alreadyExist: 0,
-      errorArray: error.message,
+      errorArray: error,
     };
   }
 };
