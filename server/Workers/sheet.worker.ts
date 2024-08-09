@@ -5,23 +5,106 @@ const ExcelJs = require("exceljs");
 const { workerData, parentPort } = require("worker_threads");
 
 const exportCsv = async ({ workerData }) => {
-  const { sheetName, brandName } = workerData;
-  console.log({ sheetName, name: brandName.replace(/\_/g, " ").toLowerCase() });
+  let { sheetName, brandName, locationQuery } = workerData;
+
+  // managing loaction Query From here
+  let locationQueryArray = locationQuery?.split(",");
+  console.log(locationQueryArray);
+  let queryArray = [
+    {
+      brand: {
+        equals: brandName.replace(/\_/g, " ").toLowerCase(),
+        mode: "insensitive",
+      },
+    },
+  ];
+  let stockQuerry = [];
+
+  if (locationQueryArray?.includes("mt")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      mtStock: {
+        gt: 0,
+      },
+    });
+  }
+  if (locationQueryArray?.includes("ib")) {
+    console.log("test passed");
+    stockQuerry.push({
+      // @ts-ignore
+
+      ibStock: {
+        gt: 0,
+      },
+    });
+  }
+  if (locationQueryArray?.includes("main")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      mainStock: {
+        gt: 0,
+      },
+    });
+  }
+  if (locationQueryArray?.includes("sl")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      smapleLine: {
+        gt: 0,
+      },
+    });
+  }
+  if (locationQueryArray?.includes("gd")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      godwanStock: {
+        gt: 0,
+      },
+    });
+  }
+  if (locationQueryArray?.includes("ddn")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      ddnStock: {
+        gt: 0,
+      },
+    });
+  }
+  if (locationQueryArray?.includes("dl")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      dlStock: {
+        gt: 0,
+      },
+    });
+  }
+
+  if (!locationQueryArray) {
+    queryArray.push({
+      // @ts-ignore
+      totalStock: {
+        gt: 0,
+      },
+    });
+  } else {
+    queryArray.push({
+      // @ts-ignore
+      stockId: {
+        OR: [...stockQuerry],
+      },
+    });
+  }
+  console.log(JSON.stringify(queryArray));
+
   const product = await prismaClient.product.findMany({
     where: {
-      AND: [
-        {
-          brand: {
-            equals: brandName.replace(/\_/g, " ").toLowerCase(),
-            mode: "insensitive",
-          },
-        },
-        {
-          totalStock: {
-            gt: 0,
-          },
-        },
-      ],
+      AND: [...queryArray],
     },
   });
 
@@ -52,6 +135,7 @@ const exportCsv = async ({ workerData }) => {
         email: item.mrp,
       });
       row.height = 185;
+      row.alignment = { vertical: "middle", horizontal: "center" };
 
       worksheet.addImage(imageId, {
         // @ts-ignore

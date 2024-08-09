@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { inventryLocation } from "@/Data/Arrays";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -25,6 +26,7 @@ export default function CardWithForm() {
   const [sheet, setSheet] = useState("");
   const [brandName, setBrandName] = useState("");
   const [link, setLink] = useState("");
+  const [queryString, setQueryString] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [brand, setBrand] = useState<
     Array<{
@@ -90,6 +92,36 @@ export default function CardWithForm() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div className="flex w-full justify-center items-center">
+                  <div className="grid w-11/12 grid-cols-2">
+                    {Object.values(inventryLocation).map((key, index) => {
+                      return (
+                        <label className="flex gap-2" key={index} htmlFor={key}>
+                          <input
+                            onChange={(e) => {
+                              console.log(e.target.checked);
+                              if (e.target.checked) {
+                                if (!queryString.includes(e.target.name))
+                                  setQueryString((prev) => [
+                                    ...prev,
+                                    e.target.name,
+                                  ]);
+                              } else {
+                                setQueryString((prev) =>
+                                  prev.filter((item) => item !== e.target.name)
+                                );
+                              }
+                            }}
+                            type="checkbox"
+                            name={Object.keys(inventryLocation)[index]}
+                            id={key}
+                          />
+                          {key}
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
               </div>
             </form>
           </CardContent>
@@ -101,7 +133,13 @@ export default function CardWithForm() {
                 setLink("");
                 axios
                   .post(
-                    `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/export?sheetName=${sheet}&brandName=${brandName}`
+                    `${
+                      process.env.NEXT_PUBLIC_SERVER_URL
+                    }/sheet/export?sheetName=${sheet}&brandName=${brandName}&${
+                      queryString.length
+                        ? `locationQuery=${queryString.join()}`
+                        : ""
+                    }`
                   )
                   .then((res) => {
                     setLoading(false);

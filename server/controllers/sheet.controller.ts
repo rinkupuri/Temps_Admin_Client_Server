@@ -3,11 +3,11 @@ import path from "path";
 import { Worker } from "worker_threads";
 import { AsyncWrapper } from "../Error/AsyncWrapper";
 export const exportSheet = AsyncWrapper(async (req: Request, res: Response) => {
-  const { sheetName, brandName } = req.query;
+  const { sheetName, brandName, locationQuery } = req.query;
   if (sheetName === undefined || brandName === undefined) {
     return res.status(400).json({ message: "Missing required parameters" });
   }
-  const workerData = { sheetName, brandName };
+  const workerData = { sheetName, brandName, locationQuery };
   const worker = new Worker(
     path.resolve(__dirname, "../Workers/sheet.worker.ts"),
     {
