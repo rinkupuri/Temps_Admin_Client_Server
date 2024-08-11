@@ -4,13 +4,13 @@ import { AsyncWrapper } from "../Error/AsyncWrapper";
 
 export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
   const {
-    productId,
+    model,
     quantity,
     fromLocation,
     cartId,
   }: {
     cartId: string;
-    productId: string;
+    model: string;
     fromLocation: string;
     quantity: {
       ddnStock: number;
@@ -47,8 +47,8 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
           },
         },
         {
-          productId: {
-            equals: productId,
+          model: {
+            equals: model,
           },
         },
       ],
@@ -80,7 +80,7 @@ export const addToCart = AsyncWrapper(async (req: Request, res: Response) => {
     const cart = await prisma.cart.create({
       data: {
         cartId,
-        productId,
+        model,
         fromLocation,
         quantity: {
           create: {
@@ -106,7 +106,7 @@ export const getCart = AsyncWrapper(async (req: Request, res: Response) => {
       cartId,
     },
     select: {
-      productId: true,
+      model: true,
       fromLocation: true,
       quantity: {
         select: {
@@ -125,7 +125,7 @@ export const getCart = AsyncWrapper(async (req: Request, res: Response) => {
   for (let i = 0; i < cart.length; i++) {
     const product = await prisma.product.findUnique({
       where: {
-        id: cart[i].productId,
+        modelName: cart[i].model,
       },
       select: {
         modelName: true,

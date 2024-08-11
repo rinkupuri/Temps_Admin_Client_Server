@@ -126,6 +126,8 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
     }
   }
 
+  // getting all product data with the Same Querry
+
   const products = await prismaClient.product.findMany({
     where: {
       AND: [
@@ -161,10 +163,31 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
       modelName: "asc", // Example ordering
     },
   });
+
+  // getting the count of product of the same Querry for meta
+  const count = await prismaClient.product.count({
+    where: {
+      AND: [
+        { brand: whereQuerry },
+        {
+          totalStock: { gt: 0 },
+        },
+      ],
+    },
+  });
+
+  // sending responce to the client
+
   res.status(200).json({
     success: true,
     message: "Products fetched",
     products,
+    meta: {
+      totalCount: count,
+      currentPage: parseInt(page as string) || 1,
+      totalPages: Math.ceil(count / (parseInt(limit as string) || 10)),
+      perPage: parseInt(limit as string) || 10,
+    },
   });
 });
 

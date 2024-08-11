@@ -23,3 +23,12 @@ export interface cart {
   fromLocation: string;
   quantity: Stock;
 }
+
+
+
+export interface productMeta {
+  currentPage: number;
+  perPage: number;
+  totalCount: number;
+  totalPages: number;
+}

@@ -24,6 +24,9 @@ const processCSV = async (csvFilePath) => {
       const { modelName, image, mrp, brand } = value;
 
       // Validate required fields
+      if (!modelName) {
+        continue;
+      }
       if (!modelName || !image || !mrp || !brand || isNaN(parseFloat(mrp))) {
         errorArray.push({
           lineNumber: index + 2,

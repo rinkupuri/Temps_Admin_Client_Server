@@ -21,7 +21,9 @@ import {
   useSearchParams,
 } from "next/navigation";
 import axios from "axios";
-import { Product } from "@/types/ProductCardTypes";
+import { Product, productMeta } from "@/types/ProductCardTypes";
+import { getProductsAPI } from "@/Api/product.api";
+import SkeletonGrid from "./SkeletonGrid";
 const ProductGrid = lazy(() => import("@/components/productGrid"));
 
 const Page: FC<{ title: string }> = ({ title }) => {
@@ -30,13 +32,12 @@ const Page: FC<{ title: string }> = ({ title }) => {
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
   const { cart, setCart } = useContext(CartContext);
-  const [productCount, setProductCount] = useState(0);
+  const [productMeta, setProductMeta] = useState<productMeta>();
   const [limit, setLimit] = useState<number>(100);
   const [brand, setBrand] = useState<Array<{ brand: string }>>([]);
   const [productData, setProductData] = useState<Product[]>();
   const [brandQuerry, setBrandQuerry] = useState(qurry.get("brand") || "all");
   const [loading, setLoading] = useState(true);
-  const [loading2, setLoading2] = useState(true);
 
   useEffect(() => {
     setBrandQuerry(qurry.get("brand") || "all");
@@ -44,26 +45,21 @@ const Page: FC<{ title: string }> = ({ title }) => {
 
   useEffect(() => {
     setLoading(true);
-    axios
-      .get(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/product/get?brand=${brandQuerry}&page=${page}&limit=${limit}`
-      )
-      .then((data) => {
-        setProductData(data.data.products);
-        setLoading(false);
-      });
+    getProductsAPI({ page, limit, brandQuerry }).then((data) => {
+      setProductData(data.products);
+      setProductMeta(data.meta);
+      setLoading(false);
+    });
     return () => {
       setProductData([]);
     };
   }, [page, limit, brandQuerry, pathName]);
 
   useEffect(() => {
-    setLoading2(true);
     axios
       .get(`${process.env.NEXT_PUBLIC_SERVER_URL}/product/brand`)
       .then((data) => {
         setBrand(data.data.brands);
-        setLoading2(false);
       });
   }, []);
 
@@ -105,45 +101,45 @@ const Page: FC<{ title: string }> = ({ title }) => {
             </div>
           </div>
         </div>
-        <Suspense
-          fallback={
-            <div className="w-full flex justify-center items-center h-full">
-              <div className="flex rounded-full border-t-2 border-white animate-spin"></div>
-            </div>
-          }
-        >
+        {loading ? (
+          <SkeletonGrid />
+        ) : (
           <ProductGrid
             cart={cart}
             setCart={setCart}
             productData={productData}
           />
-        </Suspense>
-
+        )}
         {/* Page Navigation  */}
         <div className="flex p-1  rounded-md w-full justify-between items-center bg-zinc-800 h-[50px]">
-          <button
-            onClick={() => {
-              page && setPage((prev: number) => prev - 1);
-            }}
-            disabled={page ? false : true}
-            className={`bg-black ${
-              page ? "cursor-pointer" : "cursor-not-allowed"
-            } flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
-          >
-            <FcPrevious size={15} /> Previous
-          </button>
-          <button
-            onClick={() => {
-              setPage((prev: number) => prev + 1);
-            }}
-            className={`${
-              page >= productCount / 100
-                ? "cursor-not-allowed"
-                : "cursor-pointer"
-            } bg-black flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
-          >
-            Next <FcNext size={15} />
-          </button>
+          <div className="flex justify-start items-center flex-[1]">
+            <button
+              onClick={() => {
+                page && setPage((prev: number) => prev - 1);
+              }}
+              disabled={page ? false : true}
+              className={`bg-black ${
+                // @ts-ignore
+                productMeta?.currentPage > 1 ? "cursor-pointer" : "hidden"
+              } flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
+            >
+              <FcPrevious size={15} /> Previous
+            </button>
+          </div>
+          <div className="flex justify-end items-center flex-[1]">
+            <button
+              onClick={() => {
+                setPage((prev: number) => prev + 1);
+              }}
+              className={`${
+                productMeta?.currentPage === productMeta?.totalPages
+                  ? "hidden"
+                  : "cursor-pointer"
+              } bg-black flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
+            >
+              Next <FcNext size={15} />
+            </button>
+          </div>
         </div>
       </div>
     </div>

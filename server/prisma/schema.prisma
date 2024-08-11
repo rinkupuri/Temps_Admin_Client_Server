@@ -53,6 +53,6 @@ model Cart {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   cartId       String
   fromLocation String        @default("")
-  productId    String
+  model    String
   quantity     CartQuantity?
 }

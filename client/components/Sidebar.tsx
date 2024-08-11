@@ -1,22 +1,8 @@
+import { menus } from "@/Data/Arrays";
 import Link from "next/link";
 import React from "react";
-import { AiFillProduct } from "react-icons/ai";
-import { BiPurchaseTag } from "react-icons/bi";
-import { FaSalesforce } from "react-icons/fa";
-import { GrOrderedList } from "react-icons/gr";
-import { SiGooglesheets } from "react-icons/si";
-
 
 const Page = () => {
-  const menus = [
-    { name: "Products", url: "/products", icon: <AiFillProduct size={20} /> },
-    { name: "Orders", url: "/order", icon: <GrOrderedList size={20} /> },
-    {
-      name: "Image Sheet",
-      url: "/sheets",
-      icon: <SiGooglesheets size={20} />,
-    },
-  ];
   return (
     <div className="flex md:flex-col bg-black justify-between md:justify-start overflow-x-scroll md:overflow-hidden w-full md:mt-4 gap-2 items-center h-full">
       {menus.map((value, index) => (

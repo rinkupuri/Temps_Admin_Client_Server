@@ -13,6 +13,7 @@ import { cart, Product } from "@/types/ProductCardTypes";
 import cartJsonFile from "@/jsons/cart.json";
 import axios from "axios";
 import { usePathname, useSearchParams } from "next/navigation";
+import { addToCartAPI } from "@/Api/Cart.api";
 
 const ProductCard: FC<{
   product: Product;
@@ -41,30 +42,19 @@ const ProductCard: FC<{
 
   useEffect(() => {
     if (cartMTQTY || cartIBQTY || cartDLQTY || cartDDNQTY) {
-      (async () => {
-        axios.post(
-          `${process.env.NEXT_PUBLIC_SERVER_URL}/cart/addItem`,
-          JSON.stringify({
-            productId: product.id,
-            fromLocation: fromLocation,
-            quantity: {
-              ddnStock: cartDDNQTY,
-              dlStock: cartDLQTY,
-              ibStock: cartIBQTY,
-              godwanStock: 0,
-              mainStock: 0,
-              mtStock: cartMTQTY,
-              smapleLine: 0,
-            },
-          }),
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-            withCredentials: true,
-          }
-        );
-      })();
+      addToCartAPI({
+        fromLocation: fromLocation,
+        model: product.modelName,
+        quantity: {
+          mtStock: cartMTQTY,
+          ibStock: cartIBQTY,
+          dlStock: cartDLQTY,
+          ddnStock: cartDDNQTY,
+          godwanStock: 0,
+          mainStock: 0,
+          smapleLine: 0,
+        },
+      });
     }
   }, [cartMTQTY, cartIBQTY, cartDLQTY, cartDDNQTY, fromLocation]);
 
@@ -190,30 +180,19 @@ const ProductCard: FC<{
             value={fromLocation}
             onValueChange={(e) => {
               setFromLocation(e);
-              (async () => {
-                axios.post(
-                  `${process.env.NEXT_PUBLIC_SERVER_URL}/cart/addItem`,
-                  JSON.stringify({
-                    productId: product.id,
-                    fromLocation: e,
-                    quantity: {
-                      ddnStock: cartDDNQTY,
-                      dlStock: cartDLQTY,
-                      ibStock: cartIBQTY,
-                      godwanStock: 0,
-                      mainStock: 0,
-                      mtStock: cartMTQTY,
-                      smapleLine: 0,
-                    },
-                  }),
-                  {
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    withCredentials: true,
-                  }
-                );
-              })();
+              addToCartAPI({
+                fromLocation: fromLocation,
+                model: product.modelName,
+                quantity: {
+                  mtStock: cartMTQTY,
+                  ibStock: cartIBQTY,
+                  dlStock: cartDLQTY,
+                  ddnStock: cartDDNQTY,
+                  godwanStock: 0,
+                  mainStock: 0,
+                  smapleLine: 0,
+                },
+              });
             }}
           >
             <SelectTrigger className="">
