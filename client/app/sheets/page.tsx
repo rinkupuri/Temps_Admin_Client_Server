@@ -147,6 +147,9 @@ export default function CardWithForm() {
                     if (!res.data.link) {
                       alert("Something went wrong Please Contact to Developer");
                     }
+                  }).catch(err=>{
+                    setLoading(false);
+                    alert("Something went wrong Please try again in Some Seconds");
                   });
               }}
             >

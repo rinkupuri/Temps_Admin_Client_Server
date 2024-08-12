@@ -8,7 +8,7 @@ const Navbar = () => {
     <div className="flex w-full justify-center items-center border-white  border-b-[1px]">
       <div className="h-[50px] w-11/12 flex justify-between items-center ">
         <div className="flex">
-          <h1>Logo</h1>
+          <h1>Temps</h1>
         </div>
         <div className="flex *:cursor-pointer gap-4">
           <BiBell size={18} />

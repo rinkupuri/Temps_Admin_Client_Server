@@ -36,7 +36,7 @@ const Page = () => {
   };
   return (
     <>
-      <div className="flex justify-center h-screen w-full">
+      <div className="flex justify-center  w-full">
         <div className="flex flex-col h-full w-11/12 ">
           <h1>Search</h1>
           <div className="flex my-3">
@@ -49,11 +49,13 @@ const Page = () => {
           {loading ? (
             <SkeletonGrid />
           ) : product.length === 0 ? (
-            <div className="flex justify-center items-center h-screen w-full">
+            <div className="flex justify-center items-center h-[clac(100vh_-_150px)] w-full">
               <h1>No Product Found</h1>
             </div>
           ) : (
-            <ProductGrid productData={product} setCart={() => {}} cart={[]} />
+            <div className="flex w-full h-[calc(100vh_-_200px)]">
+              <ProductGrid productData={product} setCart={() => {}} cart={[]} />
+            </div>
           )}
         </div>
       </div>

@@ -6,6 +6,7 @@ import {
   getBrands,
   getProducts,
   serachProduct,
+  updateOffer,
 } from "../controllers/products.controller";
 import multer from "multer";
 const router = express.Router();
@@ -17,5 +18,6 @@ router.get("/get", getProducts);
 router.get("/search", serachProduct);
 router.get("/brand", getBrands);
 router.get("/exportall", allProductExport);
+router.post("/offerupdate", upload.single("csvData"), updateOffer);
 
 export default router;

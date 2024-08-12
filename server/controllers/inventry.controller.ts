@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import path from "path";
 import { Worker } from "worker_threads";
+import { AsyncWrapper } from "../Error/AsyncWrapper";
+import prisma from "../prisma/prismaClient";
 
 export const updateInventryData = async (req: Request, res: Response) => {
   const worker = new Worker(
@@ -28,3 +30,29 @@ export const updateInventryData = async (req: Request, res: Response) => {
     }
   });
 };
+
+export const updateMany = AsyncWrapper(async (req: Request, res: Response) => {
+  const data = await prisma.product.updateMany({
+    where: {
+      totalStock: {
+        gt: 0,
+      },
+    },
+    data: {
+      totalStock: 0,
+    },
+  });
+  await prisma.stock.updateMany({
+    where: {},
+    data: {
+      ddnStock: 0,
+      dlStock: 0,
+      godwanStock: 0,
+      ibStock: 0,
+      mainStock: 0,
+      mtStock: 0,
+      smapleLine: 0,
+    },
+  });
+  res.status(200).json({ message: "Success" });
+});

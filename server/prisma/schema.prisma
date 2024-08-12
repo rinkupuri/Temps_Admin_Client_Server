@@ -32,6 +32,7 @@ model Product {
   brand      String
   image      String
   mrp        Int
+  consumerOffer Int @default(0)
   totalStock Int    @default(0)
   stockId    Stock?
 }

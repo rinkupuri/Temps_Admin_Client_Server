@@ -120,6 +120,7 @@ const exportCsv = async ({ workerData }) => {
     { header: "Model No.", key: "id", width: 10 },
     { header: "Brand", key: "name", width: 10 },
     { header: "MRP", key: "email", width: 10 },
+    { header: "Offer", key: "offer", width: 10 },
   ];
 
   for (const [index, item] of product.entries()) {
@@ -133,6 +134,7 @@ const exportCsv = async ({ workerData }) => {
         id: item.modelName,
         name: item.brand,
         email: item.mrp,
+        offer: item.consumerOffer ? item.consumerOffer + "% OFF" : "No Offer",
       });
       row.height = 185;
       row.alignment = { vertical: "middle", horizontal: "center" };
