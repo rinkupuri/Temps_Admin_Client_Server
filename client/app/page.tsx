@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import productPng from "@/public/Product.png";
 import orderPng from "@/public/Order.png";
-import searchPng from "@/public/search.png";
+import searchPng from "@/public/Search.png";
 import sheetsPng from "@/public/Sheets.png";
 import React from "react";
 import Link from "next/link";
