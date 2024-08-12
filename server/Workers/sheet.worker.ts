@@ -1,5 +1,5 @@
 const path = require("path");
-
+const sharp = require("sharp");
 const prismaClient = require("../prisma/PrismaClientWorker.ts");
 const ExcelJs = require("exceljs");
 const { workerData, parentPort } = require("worker_threads");
@@ -126,8 +126,23 @@ const exportCsv = async ({ workerData }) => {
   for (const [index, item] of product.entries()) {
     console.log(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`);
     try {
+      console.log("test Run");
+      const imageBuffer = await sharp(
+        path.resolve(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`)
+      )
+        .resize(500, 500, {
+          fit: "contain",
+          background: {
+            r: 255,
+            g: 255,
+            b: 255,
+            alpha: 1,
+          },
+        })
+        .toBuffer();
+      console.log("test End");
       const imageId = workbook.addImage({
-        filename: `${item.image.replace(`${process.env.HOST_URL}/`, "")}`,
+        buffer: imageBuffer,
         extension: "png",
       });
       const row = worksheet.addRow({

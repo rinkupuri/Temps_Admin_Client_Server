@@ -7,15 +7,54 @@ import cors from "cors";
 import cartRoute from "./routes/cart.routes";
 const app = express();
 import http from "http";
+import fs from "fs";
 import inventry from "./routes/inventry.routes";
 import { serverAliveCron } from "./cron/health";
 import exportSheet from "./routes/export.routes";
 import path from "path";
 import { productImport } from "./cron/product.cron";
 import { inventryCorn } from "./cron/inventry.cron";
+import sharp from "sharp";
 const server = http.createServer(app);
 
-app.use("/images", express.static(path.join(__dirname, "images")));
+app.use("/images", async (req, res, next) => {
+  console.log(req.url);
+  const filePath = path.join(
+    __dirname,
+    "images",
+    req.url.split("?")[0].toString()
+  );
+  const { w, h } = req.query; // Width and height from query parameters
+  console.log(req.query);
+
+  if (fs.existsSync(filePath)) {
+    // Check if the file is a PNG and the resize parameters are provided
+    if (filePath.endsWith(".png")) {
+      try {
+        // Resize the image based on query parameters
+        const width = parseInt(w as string) || null;
+        const height = parseInt(h as string) || null;
+        const bufferImageData = await sharp(filePath)
+          .resize(width, height, {
+            fit: "contain",
+            background: { r: 255, g: 255, b: 255, alpha: 1 },
+          }) // Resize with provided width and height
+          .toBuffer();
+
+        // Set the response headers and send the resized image
+        res.setHeader("Content-Type", "image/png");
+        return res.send(bufferImageData);
+      } catch (error) {
+        console.error("Error processing the image:", error);
+        return res.status(500).send("Error processing the image.");
+      }
+    }
+  }
+
+  next(); // Proceed to serve the file normally if no modifications are needed
+});
+
+
 app.use("/csv", express.static(path.join(__dirname, "public/csv")));
 
 // All milddlewares

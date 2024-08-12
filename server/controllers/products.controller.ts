@@ -146,6 +146,7 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
       brand: true,
       modelName: true,
       totalStock: true,
+      consumerOffer: true,
       mrp: true,
       stockId: {
         select: {

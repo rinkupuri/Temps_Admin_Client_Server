@@ -13,6 +13,7 @@ export interface Product {
   image: string;
   brand: string;
   modelName: string;
+  consumerOffer: number;
   mrp: number;
   totalStock: number;
   stockId: Stock;

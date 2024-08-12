@@ -59,12 +59,19 @@ const ProductCard: FC<{
   }, [cartMTQTY, cartIBQTY, cartDLQTY, cartDDNQTY, fromLocation]);
 
   return (
-    <div className=" border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
+    <div className=" relative overflow-hidden border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
       <img
         className="object-contain rounded-t-md w-full h-auto"
-        src={product.image}
+        src={product.image + "?w=1000&h=1200"}
         alt=""
       />
+      <div
+        className={`absolute px-1 ${
+          product.consumerOffer ? " " : "hidden"
+        } top-0 text-sm text-center  right-0 w-16 h-6 text-white bg-zinc-900 rounded-bl-lg`}
+      >
+        {product.consumerOffer + "% Off"}
+      </div>
       <div className="flex p-2 justify-between items-center w-full">
         <span className="text-[12px]">{product.modelName}</span>
         <span className="text-[12px]">{product.brand}</span>
