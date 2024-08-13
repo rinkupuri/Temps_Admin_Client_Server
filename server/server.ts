@@ -31,6 +31,13 @@ app.use(
   })
 );
 
+
+setInterval(() => {
+  const memoryUsage = process.memoryUsage();
+  console.log(`RSS: ${memoryUsage.rss}, Heap Total: ${memoryUsage.heapTotal}, Heap Used: ${memoryUsage.heapUsed}`);
+}, 10000); // Logs every 10 seconds
+
+
 dotEnv.config();
 connectDB();
 serverAliveCron();
