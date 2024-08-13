@@ -34,6 +34,9 @@ app.use(
 
 setInterval(() => {
   const memoryUsage = process.memoryUsage();
+  Object.keys(require.cache).forEach((key) => {
+    delete require.cache[key];
+  });
   console.log(`RSS: ${memoryUsage.rss}, Heap Total: ${memoryUsage.heapTotal}, Heap Used: ${memoryUsage.heapUsed}`);
 }, 10000); // Logs every 10 seconds
 
