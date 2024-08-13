@@ -62,7 +62,7 @@ const ProductCard: FC<{
     <div className=" relative overflow-hidden border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
       <img
         className="object-contain rounded-t-md w-full h-auto"
-        src={product.image + "?w=1000&h=1200"}
+        src={product.image}
         alt=""
       />
       <div

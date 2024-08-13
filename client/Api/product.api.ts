@@ -27,5 +27,6 @@ export const getProductsAPI = async ({
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_SERVER_URL}/product/get?brand=${brandQuerry}&page=${page}&limit=${limit}`
   );
+   
   return res.data;
 };
