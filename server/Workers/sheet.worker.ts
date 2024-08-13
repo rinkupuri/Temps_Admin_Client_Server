@@ -125,26 +125,37 @@ const exportCsv = async ({ workerData }) => {
 
   for (const [index, item] of product.entries()) {
     console.log(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`);
+    let imageBuffer = null;
+    let imageId = null;
     try {
       console.log("test Run");
-      const imageBuffer = await sharp(
-        path.resolve(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`)
-      )
-        .resize(500, 500, {
-          fit: "contain",
-          background: {
-            r: 255,
-            g: 255,
-            b: 255,
-            alpha: 1,
-          },
-        })
-        .toBuffer();
-      console.log("test End");
-      const imageId = workbook.addImage({
-        buffer: imageBuffer,
-        extension: "png",
-      });
+      try {
+        imageBuffer = await sharp(
+          path.resolve(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`)
+        )
+          .resize(500, 500, {
+            fit: "contain",
+            background: {
+              r: 255,
+              g: 255,
+              b: 255,
+              alpha: 1,
+            },
+          })
+          .jpeg({ quality: 100 })
+          .toBuffer();
+        imageId = workbook.addImage({
+          buffer: imageBuffer,
+          extension: "png",
+        });
+      } catch (error) {
+        imageId = workbook.addImage({
+          filename: `${item.image.replace(`${process.env.HOST_URL}/`, "")}`,
+          extension: "png",
+        });
+      }
+      console.log(index);
+
       const row = worksheet.addRow({
         id: item.modelName,
         name: item.brand,

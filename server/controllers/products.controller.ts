@@ -206,6 +206,8 @@ export const serachProduct = AsyncWrapper(
         image: true,
         brand: true,
         modelName: true,
+        totalStock: true,
+        consumerOffer: true,
         mrp: true,
         stockId: {
           select: {

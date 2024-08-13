@@ -3,7 +3,7 @@ import { downloadAndSaveCSV, runWorker } from "../functions/cron.functions";
 import { urlsAndPaths, workerDataArray } from "../Data/cron.array";
 import path from "path";
 
-export const productImport = () => {
+export const productImport = async () => {
   cron.schedule("30 0 * * *", async () => {
     try {
       await Promise.all(
