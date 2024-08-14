@@ -1,7 +1,7 @@
 import Link from "next/link";
 import React from "react";
 import { BiBell, BiCart, BiNotification, BiUser } from "react-icons/bi";
-import { CiSettings } from "react-icons/ci";
+import { CiDiscount1, CiSettings } from "react-icons/ci";
 
 const Navbar = () => {
   return (
@@ -12,7 +12,7 @@ const Navbar = () => {
         </div>
         <div className="flex *:cursor-pointer gap-4">
           <BiBell size={18} />
-          <CiSettings size={18} />
+          <CiDiscount1 size={18} />
           <BiUser size={18} />
           <Link href={"/cart"}>
             <BiCart size={18} />

@@ -1,5 +1,6 @@
 const csv = require("csvtojson");
 const prismaClient = require("../prisma/PrismaClientWorker.ts");
+const fs = require("fs");
 
 const { workerData, parentPort } = require("worker_threads");
 const processOfferCSV = async (csvFilePath) => {
@@ -13,18 +14,16 @@ const processOfferCSV = async (csvFilePath) => {
       where: {},
       data: { consumerOffer: 0 },
     });
-    console.log(jsonArray);
 
-    for (const [index, value] of jsonArray.entries()) {
+    const result = jsonArray.map(async (value, index) => {
       const { model, offer } = value;
 
-      console.log(value);
       if (!model || !offer || Number.isNaN(parseInt(offer))) {
         errorArray.push({
           error: "Invalid data format",
           row: index + 2,
         });
-        continue;
+        return;
       }
 
       const isExist = await prismaClient.product.findUnique({
@@ -36,11 +35,14 @@ const processOfferCSV = async (csvFilePath) => {
           data: { consumerOffer: parseInt(offer) },
         });
         successfull++;
+        return `Done ${model}`;
       } else {
         notExist++;
       }
-    }
-
+    });
+    const results = await Promise.all(result);
+    console.log(results);
+    fs.unlink(csvFilePath, (err) => {});
     return {
       successfull,
       notExist,

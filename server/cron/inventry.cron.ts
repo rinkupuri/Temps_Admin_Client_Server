@@ -5,7 +5,7 @@ import { Worker } from "worker_threads";
 import fs from "fs";
 
 export const inventryCorn = () => {
-  cron.schedule("*/30 * * * *", () => {
+  cron.schedule("*/20 * * * *", () => {
     axios
       .get(
         "https://docs.google.com/spreadsheets/d/e/2PACX-1vRheXxtxUyyhKUqnxERRT5M0VfzMkwUo5piQwZKUYYePoeGFfxZQJmKK3FG-kJ4wlnCCYNT3xKp9SbS/pub?gid=1627605475&single=true&output=csv"

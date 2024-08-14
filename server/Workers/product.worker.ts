@@ -20,19 +20,19 @@ const processCSV = async (csvFilePath) => {
     let alreadyExist = 0;
 
 
-    for (const [index, value] of json.entries()) {
+    const result = json.map(async (value, index) => {
       const { modelName, image, mrp, brand } = value;
 
       // Validate required fields
       if (!modelName) {
-        continue;
+        return;
       }
       if (!modelName || !image || !mrp || !brand || isNaN(parseFloat(mrp))) {
         errorArray.push({
           lineNumber: index + 2,
           error: "Data is incomplete",
         });
-        continue;
+        return;
       }
 
       try {
@@ -42,7 +42,7 @@ const processCSV = async (csvFilePath) => {
         });
         if (isExist) {
           alreadyExist += 1;
-          continue;
+          return;
         }
 
         // Download and save image
@@ -94,7 +94,8 @@ const processCSV = async (csvFilePath) => {
         console.error(`Error processing line ${index + 2}:`, error.message);
         errorArray.push({ lineNumber: index + 2, error: error.message });
       }
-    }
+    });
+    await Promise.all(result);
 
     // Delete processed CSV file
     await fs.promises.unlink(csvFilePath);

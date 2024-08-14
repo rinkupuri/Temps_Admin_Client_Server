@@ -11,18 +11,32 @@ const processCSV = async (csvFilePath) => {
     let succesfullyUpadte = 0;
     let NotExist = 0;
 
-
-    for (const [index, value] of json.entries()) {
+    await prismaClient.product.updateMany({
+      where: {},
+      data: { totalStock: 0 },
+    });
+    await prismaClient.stock.updateMany({
+      where: {},
+      data: {
+        ddnStock: 0,
+        dlStock: 0,
+        godwanStock: 0,
+        ibStock: 0,
+        mainStock: 0,
+        mtStock: 0,
+        smapleLine: 0,
+      },
+    });
+    const result = json.map(async (value) => {
       if (!parseInt(value["Total"])) {
-        continue;
+        return;
       }
       const isExist = await prismaClient.product.findUnique({
         where: { modelName: value["Model No."] },
       });
       if (!isExist) {
         NotExist += 1;
-        console.log(value["Model No."]);
-        continue;
+        return console.log(value["Model No."]);
       }
       await prismaClient.product.update({
         where: { id: isExist.id },
@@ -42,7 +56,10 @@ const processCSV = async (csvFilePath) => {
       });
 
       succesfullyUpadte += 1;
-    }
+      return `Done ${value["Model No."]}`;
+    });
+    const results = await Promise.all(result);
+    console.log(workerData.csvFilePath);
 
     fs.unlinkSync(workerData.csvFilePath);
     return {
