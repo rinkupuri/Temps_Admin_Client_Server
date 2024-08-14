@@ -186,7 +186,10 @@ const exportCsv = async ({ workerData }) => {
     }
   }
   await workbook.xlsx.writeFile(
-    path.join(__dirname, `public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
+    path.join(
+      __dirname,
+      `../../public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`
+    )
   );
 };
 
