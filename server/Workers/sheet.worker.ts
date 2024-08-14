@@ -114,8 +114,8 @@ const exportCsv = async ({ workerData }) => {
     location: "worker",
   });
 
-  const workbook = new ExcelJs.Workbook();
-  const worksheet = workbook.addWorksheet("Sheet1");
+  let workbook = new ExcelJs.Workbook();
+  let worksheet = workbook.addWorksheet("Sheet1");
   worksheet.columns = [
     { header: "Image", key: "image", width: 30 },
     { header: "Model No.", key: "id", width: 10 },
@@ -149,6 +149,7 @@ const exportCsv = async ({ workerData }) => {
           buffer: imageBuffer,
           extension: "png",
         });
+        imageBuffer = null;
       } catch (error) {
         imageId = workbook.addImage({
           filename: `${item.image.replace(`${process.env.HOST_URL}/`, "")}`,
@@ -185,7 +186,16 @@ const exportCsv = async ({ workerData }) => {
   await workbook.xlsx.writeFile(
     path.resolve(`public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
   );
+  // Clear workbook and worksheet objects
   workbook.removeWorksheet(worksheet.id);
+  worksheet = null;
+  workbook = null; // Free memory
+  // Optionally trigger garbage collection
+  if (global.gc) {
+    global.gc(); // Trigger garbage collection
+  } else {
+    console.warn("Garbage collection is not exposed");
+  }
 };
 
 exportCsv({ workerData })
