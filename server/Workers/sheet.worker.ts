@@ -185,6 +185,7 @@ const exportCsv = async ({ workerData }) => {
   await workbook.xlsx.writeFile(
     path.resolve(`public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
   );
+  workbook.removeWorksheet(worksheet.id);
 };
 
 exportCsv({ workerData })

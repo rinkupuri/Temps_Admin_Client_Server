@@ -16,11 +16,14 @@ export const inventryCorn = () => {
           res.data,
           "utf8"
         );
-        const worker = new Worker(path.resolve("Workers/inventry.worker.ts"), {
-          workerData: {
-            csvFilePath: path.resolve("uploads/inventry.csv"),
-          },
-        });
+        const worker = new Worker(
+          path.resolve("dist/Workers/inventry.worker.js"),
+          {
+            workerData: {
+              csvFilePath: path.resolve("uploads/inventry.csv"),
+            },
+          }
+        );
         worker.on("message", (result) => {
           if (result?.error) {
             console.error(result.error);
