@@ -1,5 +1,6 @@
 {
   "watch": ["*"],
+  "ignore": ["node_modules", "dist"],
   "ext": "ts,js",
-  "exec": "ts-node --transpile-only server"
+  "exec": "npx tsc && node --inspect=0.0.0.0:9229 dist/server"
 }

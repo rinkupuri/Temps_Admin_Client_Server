@@ -1,6 +1,13 @@
 import Link from "next/link";
 import React from "react";
-import { BiBell, BiCart, BiNotification, BiUser } from "react-icons/bi";
+import {
+  BiBell,
+  BiCart,
+  BiExport,
+  BiImport,
+  BiNotification,
+  BiUser,
+} from "react-icons/bi";
 import { CiDiscount1, CiSettings } from "react-icons/ci";
 
 const Navbar = () => {
@@ -11,10 +18,10 @@ const Navbar = () => {
           <h1>Temps</h1>
         </div>
         <div className="flex *:cursor-pointer gap-4">
-          <BiBell size={18} />
-          <CiDiscount1 size={18} />
-          <BiUser size={18} />
-          <Link href={"/cart"}>
+          <BiBell title="Notification" size={18} />
+          <BiImport title="Import" size={18} />
+          <BiExport title="Export" size={18} />
+          <Link title="Cart" href={"/cart"}>
             <BiCart size={18} />
           </Link>
         </div>

@@ -1,5 +1,5 @@
-const prismaClient = require("../prisma/PrismaClientWorker.ts");
-const { parentPort } = require("worker_threads");
+import prismaClient from "../prisma/prismaClient";
+import { parentPort } from "worker_threads";
 
 const allOrderExport = async () => {
   const products = await prismaClient.product.findMany();

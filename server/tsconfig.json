@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
-    "module": "NodeNext", // or "esnext" for ES modules
-    "target": "es6", // or a higher version
-    "esModuleInterop": true,
-    "skipLibCheck": true
-  }
+    "target": "ES2020", // The version of JavaScript to compile to
+    "module": "commonjs", // The module system to use
+    "outDir": "./dist", // The directory to output the compiled files
+    "esModuleInterop": true, // Allow default imports from CommonJS modules
+    "skipLibCheck": true, // Skip type checking of all declaration files
+    "forceConsistentCasingInFileNames": true // Disallow inconsistently-cased references
+  },
+  "include": ["**/*.ts"], // Include all TypeScript files in the root and subdirectories
+  "exclude": ["node_modules"] // Exclude the node_modules folder
 }

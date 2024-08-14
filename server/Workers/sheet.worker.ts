@@ -1,8 +1,8 @@
-const path = require("path");
-const sharp = require("sharp");
-const prismaClient = require("../prisma/PrismaClientWorker.ts");
-const ExcelJs = require("exceljs");
-const { workerData, parentPort } = require("worker_threads");
+import path from "path";
+import sharp from "sharp";
+import prismaClient from "../prisma/prismaClient";
+import ExcelJs from "exceljs";
+import { workerData, parentPort } from "worker_threads";
 
 const exportCsv = async ({ workerData }) => {
   let { sheetName, brandName, locationQuery } = workerData;
@@ -104,6 +104,7 @@ const exportCsv = async ({ workerData }) => {
 
   const product = await prismaClient.product.findMany({
     where: {
+      // @ts-ignore
       AND: [...queryArray],
     },
   });

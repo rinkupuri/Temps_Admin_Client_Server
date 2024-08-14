@@ -1,9 +1,8 @@
-const csv = require("csvtojson");
-const prismaClient = require("../prisma/PrismaClientWorker.ts");
-const fs = require("fs");
-
-const { workerData, parentPort } = require("worker_threads");
-const processOfferCSV = async (csvFilePath) => {
+import csv from "csvtojson";
+import prismaClient from "../prisma/prismaClient";
+import fs from "fs";
+import { workerData, parentPort } from "worker_threads";
+const processOfferCSV = async (csvFilePath: string) => {
   try {
     const jsonArray = await csv().fromFile(csvFilePath);
     let successfull = 0;

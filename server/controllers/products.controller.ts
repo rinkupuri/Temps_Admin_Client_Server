@@ -48,10 +48,9 @@ export const createProduct = AsyncWrapper(
 export const createProductCSV = async (req: Request, res: Response) => {
   try {
     const worker = new Worker(
-      path.resolve(__dirname, "../Workers/product.worker.ts"),
+      path.resolve(__dirname, "../Workers/product.worker.js"),
       { workerData: { csvFilePath: req.file.path } }
     );
-
     worker.on("message", (result) => {
       if (result?.error) {
         // Handle known errors from the worker

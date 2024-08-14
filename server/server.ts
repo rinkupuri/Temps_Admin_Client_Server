@@ -54,7 +54,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({ message: "Welcome to Temps APi" });
+  res.status(200).json({ message: "Welcome 2 Temps APi" });
 });
 
 

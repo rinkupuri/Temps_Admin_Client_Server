@@ -9,7 +9,7 @@ export const exportSheet = AsyncWrapper(async (req: Request, res: Response) => {
   }
   const workerData = { sheetName, brandName, locationQuery };
   const worker = new Worker(
-    path.resolve(__dirname, "../Workers/sheet.worker.ts"),
+    path.resolve(__dirname, "../Workers/sheet.worker.js"),
     {
       workerData,
     }

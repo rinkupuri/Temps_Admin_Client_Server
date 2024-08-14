@@ -1,11 +1,11 @@
-const path = require("path");
-const fs = require("fs");
-const { parentPort, workerData } = require("worker_threads");
-const csvtojson = require("csvtojson");
-const download = require("download");
-const prismaClient = require("../prisma/PrismaClientWorker.ts");
+import path from "path";
+import fs from "fs";
+import { parentPort, workerData } from "worker_threads";
+import csvtojson from "csvtojson";
+import download from "download";
+import prismaClient from "../prisma/prismaClient";
 
-const processCSV = async (csvFilePath) => {
+const processCSV = async (csvFilePath: string) => {
   console.log(`Processing file: ${csvFilePath}`);
 
   try {
@@ -19,7 +19,6 @@ const processCSV = async (csvFilePath) => {
     let successfullyCreated = 0;
     let alreadyExist = 0;
 
-
     const result = json.map(async (value, index) => {
       const { modelName, image, mrp, brand } = value;
 
@@ -28,6 +27,7 @@ const processCSV = async (csvFilePath) => {
         return;
       }
       if (!modelName || !image || !mrp || !brand || isNaN(parseFloat(mrp))) {
+        // @ts-ignore
         errorArray.push({
           lineNumber: index + 2,
           error: "Data is incomplete",
@@ -92,6 +92,7 @@ const processCSV = async (csvFilePath) => {
         successfullyCreated += 1;
       } catch (error) {
         console.error(`Error processing line ${index + 2}:`, error.message);
+        // @ts-ignore
         errorArray.push({ lineNumber: index + 2, error: error.message });
       }
     });
@@ -104,7 +105,7 @@ const processCSV = async (csvFilePath) => {
     return {
       successfullyCreated,
       alreadyExist,
-      errorArray : JSON.stringify(errorArray),
+      errorArray: JSON.stringify(errorArray),
     };
   } catch (error) {
     return {
