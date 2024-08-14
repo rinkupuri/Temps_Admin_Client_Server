@@ -8,6 +8,7 @@ export const exportSheet = AsyncWrapper(async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing required parameters" });
   }
   const workerData = { sheetName, brandName, locationQuery };
+  console.log(workerData);
   const worker = new Worker(
     path.resolve(__dirname, "../Workers/sheet.worker.js"),
     {

@@ -9,7 +9,7 @@ const exportCsv = async ({ workerData }) => {
 
   // managing loaction Query From here
   let locationQueryArray = locationQuery?.split(",");
-  console.log(locationQueryArray);
+  console.log(workerData);
   let queryArray = [
     {
       brand: {

@@ -5,22 +5,19 @@ import connectDB from "./config/db";
 import dotEnv from "dotenv";
 import cors from "cors";
 import cartRoute from "./routes/cart.routes";
-const app = express();
 import http from "http";
-import fs from "fs";
 import inventry from "./routes/inventry.routes";
 import { serverAliveCron } from "./cron/health";
 import exportSheet from "./routes/export.routes";
 import path from "path";
 import { productImport } from "./cron/product.cron";
 import { inventryCorn } from "./cron/inventry.cron";
-import sharp from "sharp";
+const app = express();
 const server = http.createServer(app);
 
-app.use("/images", express.static(path.resolve("images")));
+app.use("/images", express.static(path.resolve("../images")));
 
-
-app.use("/csv", express.static(path.join(__dirname, "public/csv")));
+app.use("/csv", express.static(path.join(__dirname, "../public/csv")));
 
 // All milddlewares
 app.use(
