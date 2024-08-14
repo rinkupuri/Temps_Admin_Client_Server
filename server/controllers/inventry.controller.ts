@@ -6,7 +6,7 @@ import prisma from "../prisma/prismaClient";
 
 export const updateInventryData = async (req: Request, res: Response) => {
   const worker = new Worker(
-    path.resolve(__dirname, "../Workers/inventry.worker.js"),
+    path.join(__dirname, "../Workers/inventry.worker.js"),
     {
       workerData: { csvFilePath: req.file.path },
     }

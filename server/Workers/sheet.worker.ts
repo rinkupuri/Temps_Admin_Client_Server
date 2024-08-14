@@ -132,7 +132,10 @@ const exportCsv = async ({ workerData }) => {
       console.log("test Run");
       try {
         imageBuffer = await sharp(
-          path.resolve(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`)
+          path.join(
+            __dirname,
+            `${item.image.replace(`${process.env.HOST_URL}/`, "")}`
+          )
         )
           .resize(500, 500, {
             fit: "contain",
@@ -183,7 +186,7 @@ const exportCsv = async ({ workerData }) => {
     }
   }
   await workbook.xlsx.writeFile(
-    path.resolve(`public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
+    path.join(__dirname, `public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
   );
 };
 

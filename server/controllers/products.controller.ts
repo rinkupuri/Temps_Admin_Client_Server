@@ -48,7 +48,7 @@ export const createProduct = AsyncWrapper(
 export const createProductCSV = async (req: Request, res: Response) => {
   try {
     const worker = new Worker(
-      path.resolve(__dirname, "../Workers/product.worker.js"),
+      path.join(__dirname, "../Workers/product.worker.js"),
       { workerData: { csvFilePath: req.file.path } }
     );
     worker.on("message", (result) => {
@@ -244,11 +244,10 @@ export const getBrands = AsyncWrapper(async (req: Request, res: Response) => {
   });
 });
 
-
 export const allProductExport = AsyncWrapper(
   async (req: Request, res: Response) => {
     const worker = new Worker(
-      path.resolve(__dirname, "../Workers/productExport.worker.ts")
+      path.join(__dirname, "../Workers/productExport.worker.ts")
     );
     worker.on("message", (result) => {
       if (result?.error) {
@@ -274,9 +273,8 @@ export const allProductExport = AsyncWrapper(
   }
 );
 
-
 export const updateOffer = AsyncWrapper(async (req: Request, res: Response) => {
-  const worker = new Worker(path.resolve("Workers/updateOffer.worker.ts"), {
+  const worker = new Worker(path.join("Workers/updateOffer.worker.ts"), {
     workerData: { csvFilePath: req.file.path },
   });
   worker.on("message", (result) => {
