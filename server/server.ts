@@ -28,6 +28,8 @@ app.use(
   })
 );
 
+console.log(path.resolve());
+
 
 setInterval(() => {
   const memoryUsage = process.memoryUsage();
