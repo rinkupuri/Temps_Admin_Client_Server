@@ -19,10 +19,9 @@ export async function downloadAndSaveCSV(url, filePath) {
 
 export function runWorker(workerData) {
   return new Promise<void>((resolve, reject) => {
-    const worker = new Worker(
-      path.join(__dirname, "../Workers/product.worker.ts"),
-      { workerData }
-    );
+    const worker = new Worker(path.resolve("dist/Workers/product.worker.js"), {
+      workerData,
+    });
 
     worker.on("message", (message) => {
       console.log(message);

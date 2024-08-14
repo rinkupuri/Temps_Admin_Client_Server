@@ -11,7 +11,7 @@ const processCSV = async (csvFilePath: string) => {
   try {
     // Read and parse CSV file
     const csvData = await fs.promises.readFile(
-      path.join(__dirname, csvFilePath),
+      path.resolve(csvFilePath),
       "utf-8"
     );
     const json = await csvtojson().fromString(csvData);

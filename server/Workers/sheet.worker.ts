@@ -3,6 +3,7 @@ import sharp from "sharp";
 import prismaClient from "../prisma/prismaClient";
 import ExcelJs from "exceljs";
 import { workerData, parentPort } from "worker_threads";
+import fs from "fs";
 
 const exportCsv = async ({ workerData }) => {
   let { sheetName, brandName, locationQuery } = workerData;
@@ -183,9 +184,13 @@ const exportCsv = async ({ workerData }) => {
       continue;
     }
   }
-  await workbook.xlsx.writeFile(
-    path.resolve(`public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`)
+  const filePath = path.resolve(
+    `public/csv/${sheetName.replace(/\s/g, "_")}.xlsx`
   );
+  const stream = fs.createWriteStream(filePath);
+
+  await workbook.xlsx.write(stream);
+
   // Clear workbook and worksheet objects
   workbook.removeWorksheet(worksheet.id);
   worksheet = null;

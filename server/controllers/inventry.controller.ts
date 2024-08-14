@@ -4,6 +4,8 @@ import { Worker } from "worker_threads";
 import { AsyncWrapper } from "../Error/AsyncWrapper";
 import prisma from "../prisma/prismaClient";
 
+
+// updating Inventry by csv 
 export const updateInventryData = async (req: Request, res: Response) => {
   const worker = new Worker(
     path.join(__dirname, "../Workers/inventry.worker.js"),
@@ -31,6 +33,9 @@ export const updateInventryData = async (req: Request, res: Response) => {
   });
 };
 
+// update many models in One shot
+// Test Only
+
 export const updateMany = AsyncWrapper(async (req: Request, res: Response) => {
   const data = await prisma.product.updateMany({
     where: {
@@ -56,3 +61,31 @@ export const updateMany = AsyncWrapper(async (req: Request, res: Response) => {
   });
   res.status(200).json({ message: "Success" });
 });
+
+// export model no wise stock
+export const exportModelWiseStock = AsyncWrapper(async (req, res) => {
+  console.log(req.body);
+  const worker = new Worker(path.resolve("dist/Workers/modelWiseExport.worker.js"), {
+    workerData: {
+      modelString: req.body.modelString,
+    },
+  });
+  worker.on("message", (result) => {
+    if (result?.error) {
+      res.status(500).json({ error: result.error });
+    } else {
+      res.status(200).json(result);
+    }
+  });
+  worker.on("error", (error) => {
+    console.error("Worker error:", error);
+    res.status(500).json({ error: "An error occurred in the worker thread." });
+  });
+  worker.on("exit", (code) => {
+    if (code !== 0) {
+      console.error(`Worker stopped with exit code ${code}`);
+      res.status(500).json({ error: "Worker stopped with an error." });
+    }
+  });
+});
+
