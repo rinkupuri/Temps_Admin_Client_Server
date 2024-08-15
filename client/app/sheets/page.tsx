@@ -1,5 +1,6 @@
 "use client";
 
+import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -147,9 +148,12 @@ export default function CardWithForm() {
                     if (!res.data.link) {
                       alert("Something went wrong Please Contact to Developer");
                     }
-                  }).catch(err=>{
+                  })
+                  .catch((err) => {
                     setLoading(false);
-                    alert("Something went wrong Please try again in Some Seconds");
+                    alert(
+                      "Something went wrong Please try again in Some Seconds"
+                    );
                   });
               }}
             >
@@ -158,13 +162,7 @@ export default function CardWithForm() {
           </CardFooter>
         </Card>
       </div>
-      {loading && (
-        <div className="absolute top-0 bg-black/10 left-0 w-full h-full flex justify-center items-center">
-          <div className="flex bg-white rounded-sm justify-center items-center w-20 h-20">
-            <div className="animate-spin rounded-full h-10 w-10 border-4 border-dotted border-gray-900"></div>
-          </div>
-        </div>
-      )}
+      {loading && <Loading />}
     </>
   );
 }

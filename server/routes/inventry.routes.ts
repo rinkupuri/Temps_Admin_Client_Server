@@ -11,6 +11,6 @@ const upload = multer({ dest: "uploads/" });
 
 router.post("/updatecsv", upload.single("csvData"), updateInventryData);
 router.post("/updatemany", updateMany);
-router.get("/exportmodelwise", exportModelWiseStock);
+router.post("/exportmodelwise", exportModelWiseStock);
 
 export default router;

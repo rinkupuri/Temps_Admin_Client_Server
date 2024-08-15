@@ -9,6 +9,8 @@ import {
   BiUser,
 } from "react-icons/bi";
 import { CiDiscount1, CiSettings } from "react-icons/ci";
+import { FcMultipleInputs } from "react-icons/fc";
+import { BulkInventryUpdate } from "./DialogBoxes";
 
 const Navbar = () => {
   return (
@@ -21,6 +23,7 @@ const Navbar = () => {
           <BiBell title="Notification" size={18} />
           <BiImport title="Import" size={18} />
           <BiExport title="Export" size={18} />
+          <BulkInventryUpdate />
           <Link title="Cart" href={"/cart"}>
             <BiCart size={18} />
           </Link>

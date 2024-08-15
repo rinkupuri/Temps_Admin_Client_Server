@@ -1,6 +1,6 @@
 import { AiFillProduct } from "react-icons/ai";
 import { BiPurchaseTag, BiSearch } from "react-icons/bi";
-import { FaSalesforce } from "react-icons/fa";
+import { FaFirstOrderAlt, FaSalesforce } from "react-icons/fa";
 import { GrOrderedList } from "react-icons/gr";
 import { SiGooglesheets } from "react-icons/si";
 
@@ -16,6 +16,11 @@ export const inventryLocation = {
 
 export const menus = [
   { name: "Products", url: "/products", icon: <AiFillProduct size={20} /> },
+  {
+    name: "Dealer Order",
+    url: "/delaerorder",
+    icon: <FaFirstOrderAlt size={20} />,
+  },
   { name: "Orders", url: "/order", icon: <GrOrderedList size={20} /> },
   {
     name: "Search",
