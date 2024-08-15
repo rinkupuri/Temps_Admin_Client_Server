@@ -64,7 +64,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   }, []);
 
   return (
-    <div className="flex mt-5 flex-col h-[calc(100vh_-_150%)] md:h-[calc(100vh_-_100px)] items-center w-full">
+    <div className="flex mt-5 flex-col h-[calc(100vh_-_150px)] md:h-[calc(100vh_-_100px)] items-center w-full">
       <div className="flex flex-col h-full w-11/12">
         <div className="flex w-full justify-between items-center">
           <h1>{title}</h1>
