@@ -51,9 +51,8 @@ const processCSV = async (csvFilePath: string) => {
           .trim()
           .replace(/\s/g, "_")
           .toLowerCase()}/${modelName}.png`;
-        const filePath = path.join(
-          __dirname,
-          `../images/${brand.trim().replace(/\s/g, "_").toLowerCase()}`,
+        const filePath = path.resolve(
+          `images/${brand.trim().replace(/\s/g, "_").toLowerCase()}`,
           `${modelName}.png`
         );
         const directoryPath = path.dirname(filePath);

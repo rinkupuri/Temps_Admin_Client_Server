@@ -64,7 +64,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   }, []);
 
   return (
-    <div className="flex mt-5 flex-col h-[calc(100vh_-_17%)] md:h-[calc(100vh_-_100px)] items-center w-full">
+    <div className="flex mt-5 flex-col h-[calc(100vh_-_150%)] md:h-[calc(100vh_-_100px)] items-center w-full">
       <div className="flex flex-col h-full w-11/12">
         <div className="flex w-full justify-between items-center">
           <h1>{title}</h1>
@@ -111,36 +111,34 @@ const Page: FC<{ title: string }> = ({ title }) => {
           />
         )}
         {/* Page Navigation  */}
-        <div className="flex w-fullfixed bottom-[70px] left-0 md:relative">
-          <div className="flex p-1 left-0 rounded-md w-full justify-between items-center bg-zinc-800 h-[50px]">
-            <div className="flex justify-start items-center flex-[1]">
-              <button
-                onClick={() => {
-                  page && setPage((prev: number) => prev - 1);
-                }}
-                disabled={page ? false : true}
-                className={`bg-black ${
-                  // @ts-ignore
-                  productMeta?.currentPage > 1 ? "cursor-pointer" : "hidden"
-                } flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
-              >
-                <FcPrevious size={15} /> Previous
-              </button>
-            </div>
-            <div className="flex justify-end items-center flex-[1]">
-              <button
-                onClick={() => {
-                  setPage((prev: number) => prev + 1);
-                }}
-                className={`${
-                  productMeta?.currentPage === productMeta?.totalPages
-                    ? "hidden"
-                    : "cursor-pointer"
-                } bg-black flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
-              >
-                Next <FcNext size={15} />
-              </button>
-            </div>
+        <div className="flex p-1 left-0 rounded-md w-full justify-between items-center bg-zinc-800 h-[50px]">
+          <div className="flex justify-start items-center flex-[1]">
+            <button
+              onClick={() => {
+                page && setPage((prev: number) => prev - 1);
+              }}
+              disabled={page ? false : true}
+              className={`bg-black ${
+                // @ts-ignore
+                productMeta?.currentPage > 1 ? "cursor-pointer" : "hidden"
+              } flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
+            >
+              <FcPrevious size={15} /> Previous
+            </button>
+          </div>
+          <div className="flex justify-end items-center flex-[1]">
+            <button
+              onClick={() => {
+                setPage((prev: number) => prev + 1);
+              }}
+              className={`${
+                productMeta?.currentPage === productMeta?.totalPages
+                  ? "hidden"
+                  : "cursor-pointer"
+              } bg-black flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
+            >
+              Next <FcNext size={15} />
+            </button>
           </div>
         </div>
       </div>
