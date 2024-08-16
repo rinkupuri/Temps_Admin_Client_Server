@@ -8,11 +8,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Textarea } from "./ui/textarea";
-import { Button } from "./ui/button";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
 import { FormEvent, useState } from "react";
 import { bulkModelWiseInventry } from "@/Api/inventry.api";
-import Loading from "./Loading";
+import Loading from "../Loading";
 
 export const BulkInventryUpdate = () => {
   const [loading, setLoading] = useState(false);
@@ -40,7 +40,11 @@ export const BulkInventryUpdate = () => {
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => handelForm(e)}>
-            <Textarea required placeholder="Paste Model Numbers Here" />
+            <Textarea
+              rows={10}
+              required
+              placeholder="Paste Model Numbers Here"
+            />
             <br />
             <div className="flex w-full justify-center items-center">
               <Button type="submit">Export</Button>

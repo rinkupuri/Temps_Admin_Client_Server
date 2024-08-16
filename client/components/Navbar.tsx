@@ -10,7 +10,8 @@ import {
 } from "react-icons/bi";
 import { CiDiscount1, CiSettings } from "react-icons/ci";
 import { FcMultipleInputs } from "react-icons/fc";
-import { BulkInventryUpdate } from "./DialogBoxes";
+import { BulkInventryUpdate } from "./Dialog/InventryCheck";
+import { Import } from "./Dialog/Import";
 
 const Navbar = () => {
   return (
@@ -21,7 +22,7 @@ const Navbar = () => {
         </div>
         <div className="flex *:cursor-pointer gap-4">
           <BiBell title="Notification" size={18} />
-          <BiImport title="Import" size={18} />
+          <Import />
           <BiExport title="Export" size={18} />
           <BulkInventryUpdate />
           <Link title="Cart" href={"/cart"}>
