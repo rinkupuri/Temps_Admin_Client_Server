@@ -10,25 +10,11 @@ const processCSV = async (csvFilePath: string) => {
     const errorArray = [];
     let succesfullyUpadte = 0;
     let NotExist = 0;
+    let NoInventryArry: string[] = [];
 
-    await prismaClient.product.updateMany({
-      where: {},
-      data: { totalStock: 0 },
-    });
-    await prismaClient.stock.updateMany({
-      where: {},
-      data: {
-        ddnStock: 0,
-        dlStock: 0,
-        godwanStock: 0,
-        ibStock: 0,
-        mainStock: 0,
-        mtStock: 0,
-        smapleLine: 0,
-      },
-    });
     const result = json.map(async (value) => {
       if (!parseInt(value["Total"])) {
+        NoInventryArry.push(value["Model No."]);
         return;
       }
       const isExist = await prismaClient.product.findUnique({
@@ -59,6 +45,36 @@ const processCSV = async (csvFilePath: string) => {
       return `Done ${value["Model No."]}`;
     });
     const results = await Promise.all(result);
+
+    const leftProduct = await prismaClient.product.findMany({
+      where: {
+        totalStock: {
+          gt: 0,
+        },
+      },
+    });
+
+    for (const [index, value] of leftProduct.entries()) {
+      if (NoInventryArry.includes(value.modelName)) {
+        await prismaClient.product.update({
+          where: { id: value.id },
+          data: { totalStock: 0 },
+        });
+        await prismaClient.stock.update({
+          where: { productId: value.id },
+          data: {
+            ddnStock: 0,
+            dlStock: 0,
+            godwanStock: 0,
+            ibStock: 0,
+            mainStock: 0,
+            mtStock: 0,
+            smapleLine: 0,
+          },
+        });
+      }
+    }
+
     console.log(workerData.csvFilePath);
 
     fs.unlinkSync(workerData.csvFilePath);
