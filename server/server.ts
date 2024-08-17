@@ -7,7 +7,6 @@ import cors from "cors";
 import cartRoute from "./routes/cart.routes";
 import http from "http";
 import inventry from "./routes/inventry.routes";
-import { serverAliveCron } from "./cron/health";
 import exportSheet from "./routes/export.routes";
 import path from "path";
 import { productImport } from "./cron/product.cron";
@@ -22,28 +21,18 @@ app.use("/csv", express.static(path.join(__dirname, "../public/csv")));
 // All milddlewares
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://temps-admin.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://admin.tempslifestyle.com",
+      "https://temps-admin.vercel.app",
+    ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
 
-console.log(path.resolve());
-
-setInterval(() => {
-  const memoryUsage = process.memoryUsage();
-  Object.keys(require.cache).forEach((key) => {
-    delete require.cache[key];
-  });
-  console.log(
-    `RSS: ${memoryUsage.rss}, Heap Total: ${memoryUsage.heapTotal}, Heap Used: ${memoryUsage.heapUsed}`
-  );
-}, 10000); // Logs every 10 seconds
-
-
 dotEnv.config();
 connectDB();
-serverAliveCron();
 inventryCorn();
 productImport();
 
