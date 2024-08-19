@@ -126,13 +126,15 @@ const exportCsv = async ({ workerData }) => {
   ];
 
   for (const [index, item] of product.entries()) {
-    console.log(`${item.image}`);
+    console.log(path.join(__dirname, "../../", `${item.image}`));
     let imageBuffer = null;
     let imageId = null;
     try {
       console.log("test Run");
       try {
-        imageBuffer = await sharp(path.resolve(`${item.image}`))
+        imageBuffer = await sharp(
+          path.join(__dirname, "../../", `${item.image}`)
+        )
           .resize(500, 500, {
             fit: "contain",
             background: {
@@ -142,7 +144,6 @@ const exportCsv = async ({ workerData }) => {
               alpha: 1,
             },
           })
-          .jpeg({ quality: 100 })
           .toBuffer();
         imageId = workbook.addImage({
           buffer: imageBuffer,
@@ -150,8 +151,9 @@ const exportCsv = async ({ workerData }) => {
         });
         imageBuffer = null;
       } catch (error) {
+        console.log("Entered");
         imageId = workbook.addImage({
-          filename: `${item.image}`,
+          filename: path.join(__dirname, "../../", `${item.image}`),
           extension: "png",
         });
       }

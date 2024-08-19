@@ -42,15 +42,10 @@ app.use(express.json());
 // Use cookie-parser middleware to parse cookies
 app.use(cookieParser());
 
+
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Welcome 2 Temps APi" });
 });
-
-
-
-
-
-
 
 // product Routes used
 
@@ -62,3 +57,5 @@ app.use("/api/v1/sheet", exportSheet);
 server.listen(process.env.PORT || 80, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
+
+export default app;
