@@ -126,15 +126,13 @@ const exportCsv = async ({ workerData }) => {
   ];
 
   for (const [index, item] of product.entries()) {
-    console.log(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`);
+    console.log(`${item.image}`);
     let imageBuffer = null;
     let imageId = null;
     try {
       console.log("test Run");
       try {
-        imageBuffer = await sharp(
-          path.resolve(`${item.image.replace(`${process.env.HOST_URL}/`, "")}`)
-        )
+        imageBuffer = await sharp(path.resolve(`${item.image}`))
           .resize(500, 500, {
             fit: "contain",
             background: {
@@ -153,7 +151,7 @@ const exportCsv = async ({ workerData }) => {
         imageBuffer = null;
       } catch (error) {
         imageId = workbook.addImage({
-          filename: `${item.image.replace(`${process.env.HOST_URL}/`, "")}`,
+          filename: `${item.image}`,
           extension: "png",
         });
       }

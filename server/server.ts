@@ -14,7 +14,7 @@ import { inventryCorn } from "./cron/inventry.cron";
 const app = express();
 const server = http.createServer(app);
 
-app.use("/images", express.static(path.join(__dirname, "../images")));
+app.use("/api/v1/images", express.static(path.join(__dirname, "../images")));
 
 app.use("/csv", express.static(path.join(__dirname, "../public/csv")));
 

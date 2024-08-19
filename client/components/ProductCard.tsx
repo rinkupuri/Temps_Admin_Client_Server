@@ -62,7 +62,7 @@ const ProductCard: FC<{
     <div className=" relative overflow-hidden border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
       <img
         className="object-contain rounded-t-md w-full h-auto"
-        src={product.image}
+        src={`${process.env.NEXT_PUBLIC_SERVER_URL}${product.image}`}
         alt=""
       />
       <div

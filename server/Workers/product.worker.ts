@@ -73,7 +73,7 @@ const processCSV = async (csvFilePath: string) => {
             brand,
             modelName,
             mrp: parseFloat(mrp),
-            image: `${process.env.HOST_URL}/images/${imageName}`,
+            image: `/images/${imageName}`,
             stockId: {
               create: {
                 ddnStock: 0,
