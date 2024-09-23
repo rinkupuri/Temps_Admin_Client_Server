@@ -26,6 +26,7 @@ const processModelCsv = async (modelString: string) => {
               ddnStock: true,
               dlStock: true,
               godwanStock: true,
+              chdStock: true,
               ibStock: true,
               mainStock: true,
               mtStock: true,

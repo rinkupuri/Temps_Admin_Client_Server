@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import productRoute from "./routes/product.routes";
+import auth from "./routes/auth.routes";
 import cookieParser from "cookie-parser";
 import connectDB from "./config/db";
 import dotEnv from "dotenv";
@@ -42,7 +43,6 @@ app.use(express.json());
 // Use cookie-parser middleware to parse cookies
 app.use(cookieParser());
 
-
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Welcome 2 Temps APi" });
 });
@@ -53,6 +53,11 @@ app.use("/api/v1/product", productRoute);
 app.use("/api/v1/cart", cartRoute);
 app.use("/api/v1/inventry", inventry);
 app.use("/api/v1/sheet", exportSheet);
+app.use("/api/v1/auth", auth);
+
+app.use("*", (req: Request, res: Response) => {
+  res.status(404).json({ message: "Not Found" });
+});
 
 server.listen(process.env.PORT || 80, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

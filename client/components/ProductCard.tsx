@@ -10,9 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cart, Product } from "@/types/ProductCardTypes";
-import cartJsonFile from "@/jsons/cart.json";
-import axios from "axios";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { addToCartAPI } from "@/Api/Cart.api";
 
 const ProductCard: FC<{
@@ -39,6 +37,9 @@ const ProductCard: FC<{
   const [cartDDNQTY, setCartDDNQTY] = useState<number>(
     cartData?.quantity.ddnStock || 0
   );
+  const [cartCHDQTY, setCartCHDQTY] = useState<number>(
+    cartData?.quantity.chdStock || 0
+  );
 
   useEffect(() => {
     if (cartMTQTY || cartIBQTY || cartDLQTY || cartDDNQTY) {
@@ -50,6 +51,7 @@ const ProductCard: FC<{
           ibStock: cartIBQTY,
           dlStock: cartDLQTY,
           ddnStock: cartDDNQTY,
+          chdStock: cartCHDQTY,
           godwanStock: 0,
           mainStock: 0,
           smapleLine: 0,
@@ -94,28 +96,28 @@ const ProductCard: FC<{
               product.stockId.ddnStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> DDN :</span> <span> {product.stockId.ddnStock || 0}</span>
+            <span> DDN:</span> <span> {product.stockId.ddnStock || 0}</span>
           </span>
           <span
             className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
               product.stockId.dlStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> DL :</span> <span> {product.stockId.dlStock || 0}</span>
+            <span> DL:</span> <span> {product.stockId.dlStock || 0}</span>
           </span>
           <span
             className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
               product.stockId.mtStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> MT :</span> <span> {product.stockId.mtStock || 0}</span>
+            <span> MT:</span> <span> {product.stockId.mtStock || 0}</span>
           </span>
           <span
             className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
               product.stockId.ibStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> IB :</span> <span> {product.stockId.ibStock || 0}</span>
+            <span> IB:</span> <span> {product.stockId.ibStock || 0}</span>
           </span>
         </div>
         <div className="flex my-1 justify-evenly items-center">
@@ -124,21 +126,28 @@ const ProductCard: FC<{
               product.stockId.mainStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> Main :</span> <span> {product.stockId.mainStock || 0}</span>
+            <span> Main:</span> <span> {product.stockId.mainStock || 0}</span>
           </span>
           <span
             className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
               product.stockId.smapleLine ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> SL :</span> <span> {product.stockId.smapleLine || 0}</span>
+            <span> SL:</span> <span> {product.stockId.smapleLine || 0}</span>
           </span>
           <span
             className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
               product.stockId.godwanStock ? "bg-green-600" : "bg-zinc-800"
             }`}
           >
-            <span> GD :</span> <span> {product.stockId.godwanStock || 0}</span>
+            <span> GD:</span> <span> {product.stockId.godwanStock || 0}</span>
+          </span>
+          <span
+            className={`xl:flex-row flex-col text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:p-[2px] xl:px-2 ${
+              product.stockId.godwanStock ? "bg-green-600" : "bg-zinc-800"
+            }`}
+          >
+            <span> CH:</span> <span> {product.stockId.chdStock || 0}</span>
           </span>
         </div>
       </div>
@@ -193,6 +202,7 @@ const ProductCard: FC<{
                 quantity: {
                   mtStock: cartMTQTY,
                   ibStock: cartIBQTY,
+                  chdStock: cartCHDQTY,
                   dlStock: cartDLQTY,
                   ddnStock: cartDDNQTY,
                   godwanStock: 0,
@@ -212,6 +222,7 @@ const ProductCard: FC<{
                 <SelectItem value="IB">GT Road</SelectItem>
                 <SelectItem value="DL">Delhi</SelectItem>
                 <SelectItem value="DDN">Dehradun</SelectItem>
+                <SelectItem value="CHD">Chandigarh</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>

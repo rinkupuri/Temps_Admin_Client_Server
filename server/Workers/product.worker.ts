@@ -80,6 +80,7 @@ const processCSV = async (csvFilePath: string) => {
                 dlStock: 0,
                 godwanStock: 0,
                 ibStock: 0,
+                chdStock: 0,
                 mainStock: 0,
                 mtStock: 0,
                 smapleLine: 0,

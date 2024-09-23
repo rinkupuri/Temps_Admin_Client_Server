@@ -152,10 +152,14 @@ const exportCsv = async ({ workerData }) => {
         imageBuffer = null;
       } catch (error) {
         console.log("Entered");
-        imageId = workbook.addImage({
-          filename: path.join(__dirname, "../../", `${item.image}`),
-          extension: "png",
-        });
+        try {
+          imageId = workbook.addImage({
+            filename: path.join(__dirname, "../../", `${item.image}`),
+            extension: "png",
+          });
+        } catch (error) {
+          continue;
+        }
       }
       console.log(index);
 

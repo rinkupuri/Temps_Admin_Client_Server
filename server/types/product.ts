@@ -11,6 +11,7 @@ export interface AllLocationStock {
   ibStock: number;
   ddnStock: number;
   dlStock: number;
+  chdStock: number;
   mainStock: number;
   smapleLine: number;
   godwanStock: number;

@@ -22,19 +22,20 @@ model Stock {
   mainStock   Int     @default(0)
   smapleLine  Int     @default(0)
   godwanStock Int     @default(0)
+  chdStock    Int     @default(0)
   productId   String  @unique @db.ObjectId
   Product     Product @relation(fields: [productId], references: [id])
 }
 
 model Product {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  modelName  String @unique
-  brand      String
-  image      String
-  mrp        Int
-  consumerOffer Int @default(0)
-  totalStock Int    @default(0)
-  stockId    Stock?
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  modelName     String @unique
+  brand         String
+  image         String
+  mrp           Int
+  consumerOffer Int    @default(0)
+  totalStock    Int    @default(0)
+  stockId       Stock?
 }
 
 model CartQuantity {
@@ -46,6 +47,7 @@ model CartQuantity {
   mainStock   Int    @default(0)
   smapleLine  Int    @default(0)
   godwanStock Int    @default(0)
+  chdStock    Int    @default(0)
   cartId      String @unique @db.ObjectId
   Cart        Cart   @relation(fields: [cartId], references: [id])
 }
@@ -54,6 +56,20 @@ model Cart {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   cartId       String
   fromLocation String        @default("")
-  model    String
+  model        String
   quantity     CartQuantity?
+}
+
+enum Role {
+  ADMIN
+  USER
+  SUSER
+}
+
+model User {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  email    String @unique
+  password String
+  role     Role   @default(USER)
 }

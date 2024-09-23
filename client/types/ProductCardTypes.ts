@@ -3,6 +3,7 @@ export interface Stock {
   dlStock: number;
   godwanStock: number;
   ibStock: number;
+  chdStock:number;
   mainStock: number;
   mtStock: number;
   smapleLine: number;
