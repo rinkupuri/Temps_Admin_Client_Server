@@ -22,8 +22,7 @@ export interface Product {
 
 export interface cart {
   product: Product;
-  fromLocation: string;
-  quantity: Stock;
+  quantity: number;
 }
 
 

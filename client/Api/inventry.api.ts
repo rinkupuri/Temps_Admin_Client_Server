@@ -2,9 +2,15 @@ import axios from "axios";
 
 export const bulkModelWiseInventry = async (modelString: string) => {
   await axios
-    .post(`${process.env.NEXT_PUBLIC_SERVER_URL}/inventry/exportmodelwise`, {
-      modelString,
-    })
+    .post(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/inventry/exportmodelwise`,
+      {
+        modelString,
+      },
+      {
+        withCredentials: true,
+      }
+    )
     .then((res) => {
       const link = res.data.link;
       if (link) {

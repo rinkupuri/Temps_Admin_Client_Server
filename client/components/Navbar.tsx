@@ -28,6 +28,7 @@ const Navbar = () => {
           <Link title="Cart" href={"/cart"}>
             <BiCart size={18} />
           </Link>
+          <BiUser title="User" size={18} />
         </div>
       </div>
     </div>

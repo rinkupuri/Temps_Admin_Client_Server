@@ -12,8 +12,14 @@ import exportSheet from "./routes/export.routes";
 import path from "path";
 import { productImport } from "./cron/product.cron";
 import { inventryCorn } from "./cron/inventry.cron";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import swaggerOptions from "./config/SwaggerOtions"; // Adjust path as needed
 const app = express();
 const server = http.createServer(app);
+import webData from "./routes/webData.routes";
+import UserRouter from "./routes/user.routes";
+import errorHandler from "./Error/ErrorHandler";
 
 app.use("/api/v1/images", express.static(path.join(__dirname, "../images")));
 
@@ -47,17 +53,60 @@ app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Welcome 2 Temps APi" });
 });
 
+// Generate Swagger documentation
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+
+// Serve Swagger UI documentation at /api-docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // product Routes used
 
+/**
+ * @route   /api/v1/product
+ * @desc    Product-related routes
+ */
 app.use("/api/v1/product", productRoute);
+
+/**
+ * @route   /api/v1/cart
+ * @desc    Cart-related routes
+ */
 app.use("/api/v1/cart", cartRoute);
+
+/**
+ * @route   /api/v1/inventry
+ * @desc    Inventory-related routes
+ */
 app.use("/api/v1/inventry", inventry);
+
+/**
+ * @route   /api/v1/sheet
+ * @desc    Sheet export-related routes
+ */
 app.use("/api/v1/sheet", exportSheet);
+
+/**
+ * @route   /api/v1/auth
+ * @desc    Authentication-related routes
+ */
 app.use("/api/v1/auth", auth);
+
+/**
+ * @route   /api/v1/webData
+ * @desc    Web data-related routes
+ */
+app.use("/api/v1/webData", webData);
+/**
+ * @route   /api/v1/user
+ * @desc    User Related routes
+ */
+app.use("/api/v1/user", UserRouter);
 
 app.use("*", (req: Request, res: Response) => {
   res.status(404).json({ message: "Not Found" });
 });
+app.use(errorHandler);
+
 
 server.listen(process.env.PORT || 80, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

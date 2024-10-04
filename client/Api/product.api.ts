@@ -7,7 +7,10 @@ export const searchProductAPI = async ({
 }) => {
   try {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_SERVER_URL}/product/search?query=${queryModel}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/product/search?query=${queryModel}`,
+      {
+        withCredentials: true,
+      }
     );
     return res.data.products;
   } catch (err) {
@@ -24,9 +27,16 @@ export const getProductsAPI = async ({
   page: number;
   limit: number;
 }) => {
-  const res = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/product/get?brand=${brandQuerry}&page=${page}&limit=${limit}`
-  );
-   
-  return res.data;
+  try {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/product/get?brand=${brandQuerry}&page=${page}&limit=${limit}`,
+      {
+        withCredentials: true,
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    return console.log(err);
+  }
 };

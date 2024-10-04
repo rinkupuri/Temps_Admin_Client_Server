@@ -1,17 +1,12 @@
 import { cartAPiType } from "@/types/CartContextTypes";
 import axios from "axios";
 
-export const addToCartAPI = async ({
-  fromLocation,
-  model,
-  quantity,
-}: cartAPiType) => {
+export const addToCartAPI = async ({ model, quantity }: cartAPiType) => {
   axios
     .post(
       `${process.env.NEXT_PUBLIC_SERVER_URL}/cart/addItem`,
       JSON.stringify({
         model,
-        fromLocation,
         quantity,
       }),
       {
@@ -25,7 +20,6 @@ export const addToCartAPI = async ({
     .catch((err) => {
       const intervalCartAPI = setInterval(() => {
         addToCartAPI({
-          fromLocation,
           model,
           quantity,
         });

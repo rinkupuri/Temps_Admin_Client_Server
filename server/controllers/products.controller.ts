@@ -5,19 +5,22 @@ import { AsyncWrapper } from "../Error/AsyncWrapper";
 import { Worker } from "worker_threads";
 import path from "path";
 
-// create product Route
-
+// Route to create a single product
 export const createProduct = AsyncWrapper(
   async (req: Request, res: Response) => {
     const { modelName, image, mrp, brand } = req.body as product;
+
+    // Check if all required fields are provided
     if (!modelName && !image && !mrp && !brand) {
       res.status(403).json({
         success: false,
         message: "invalid data",
       });
     }
+
+    // Create a new product entry in the database
     const products = await prismaClient.product.create({
-      // @ts-ignore
+      // @ts-ignore to ignore potential TS errors for relations
       data: {
         brand,
         modelName,
@@ -37,6 +40,7 @@ export const createProduct = AsyncWrapper(
       },
     });
 
+    // Return the created product in the response
     res.status(200).json({
       success: true,
       message: "Product Created",
@@ -45,53 +49,51 @@ export const createProduct = AsyncWrapper(
   }
 );
 
-// bulk product Create Route
+// Route to create products in bulk using CSV file upload
 export const createProductCSV = async (req: Request, res: Response) => {
   try {
+    // Create a new worker thread for handling CSV processing
     const worker = new Worker(
       path.join(__dirname, "../Workers/product.worker.js"),
       { workerData: { csvFilePath: req.file.path } }
     );
+
+    // Listen for messages from the worker and send the result back to the client
     worker.on("message", (result) => {
       if (result?.error) {
-        // Handle known errors from the worker
         return res.status(500).json({ error: result.error });
       }
-      // Send successful result
       res.status(200).json(result);
     });
 
+    // Handle any errors that occur in the worker
     worker.on("error", (error) => {
       console.error("Worker error:", error);
-      // Handle unexpected errors
       res
         .status(500)
         .json({ error: "An error occurred in the worker thread." });
     });
 
+    // Handle worker exit events to catch any non-zero exit codes
     worker.on("exit", (code) => {
       if (code !== 0) {
         console.error(`Worker stopped with exit code ${code}`);
-        // Handle worker exit with non-zero status code
         res.status(500).json({ error: "Worker stopped with an error." });
       }
-      // Optionally handle successful completion if needed
     });
-
-    // Ensure the response is only sent once, after worker completion or error
   } catch (error) {
-    // Handle errors that occur while setting up the worker
+    // Catch and handle any errors that occur during worker creation
     console.error("Error creating worker:", error);
     res.status(500).json({ error: "Failed to start the worker thread." });
   }
 };
 
+// Route to fetch products with pagination, brand filtering, and stock availability
 export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
-  let { brand: brandQuerry, limit, page } = req.query;
-  let whereQuerry = {};
+  let { brand: brandQuery, limit, page } = req.query;
+  let whereQuery = {};
 
-  // handling page querry
-
+  // Handle page query
   if (!parseInt(page as string)) {
     if (parseInt(page as string) < 0) {
       page = "1";
@@ -99,47 +101,42 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
     page = "1";
   }
 
-  // handeling limit querry
-
+  // Handle limit query
   if (limit && isNaN(parseInt(limit as string)))
     return res
       .status(400)
       .json({ success: false, message: "Invalid limit value" });
   if (parseInt(limit as string) > 100) {
-    limit = "100";
+    limit = "100"; // Max limit is 100
   }
 
-  // handling Brand Querry
-
-  if (brandQuerry) {
-    if (brandQuerry === "all") {
-      whereQuerry = {};
+  // Handle brand query
+  if (brandQuery) {
+    if (brandQuery === "all") {
+      whereQuery = {};
     } else {
-      const brandName = brandQuerry
+      const brandName = brandQuery
         .toString()
         .toLocaleLowerCase()
         .replace(/\_/g, " ");
-      whereQuerry = {
+      whereQuery = {
         contains: brandName,
         mode: "insensitive",
       };
     }
   }
 
-  // getting all product data with the Same Querry
-
+  // Fetch products matching the query criteria
   const products = await prismaClient.product.findMany({
     where: {
       AND: [
-        { brand: whereQuerry },
-        {
-          totalStock: { gt: 0 },
-        },
+        { brand: whereQuery }, // Apply brand filter if provided
+        { totalStock: { gt: 0 } }, // Only get products with stock greater than 0
       ],
     },
     take: parseInt(limit as string) || 10, // Default limit is 10
     skip:
-      (parseInt(page as string) - 1) * (parseInt(limit as string) || 10) || 0, // Default page is 1
+      (parseInt(page as string) - 1) * (parseInt(limit as string) || 10) || 0, // Pagination logic
     select: {
       id: true,
       image: true,
@@ -162,24 +159,18 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
       },
     },
     orderBy: {
-      modelName: "asc", // Example ordering
+      modelName: "asc", // Order products by modelName
     },
   });
 
-  // getting the count of product of the same Querry for meta
+  // Get the total count of products matching the same query
   const count = await prismaClient.product.count({
     where: {
-      AND: [
-        { brand: whereQuerry },
-        {
-          totalStock: { gt: 0 },
-        },
-      ],
+      AND: [{ brand: whereQuery }, { totalStock: { gt: 0 } }],
     },
   });
 
-  // sending responce to the client
-
+  // Send response with products and pagination meta
   res.status(200).json({
     success: true,
     message: "Products fetched",
@@ -193,9 +184,12 @@ export const getProducts = AsyncWrapper(async (req: Request, res: Response) => {
   });
 });
 
-export const serachProduct = AsyncWrapper(
+// Route to search products based on brand or model name
+export const searchProduct = AsyncWrapper(
   async (req: Request, res: Response) => {
     const { query } = req.query;
+
+    // Fetch products matching the search query
     const products = await prismaClient.product.findMany({
       where: {
         OR: [
@@ -224,6 +218,8 @@ export const serachProduct = AsyncWrapper(
         },
       },
     });
+
+    // Send the found products in the response
     res.status(200).json({
       success: true,
       message: "Products fetched",
@@ -232,14 +228,17 @@ export const serachProduct = AsyncWrapper(
   }
 );
 
+// Route to get a list of distinct brands
 export const getBrands = AsyncWrapper(async (req: Request, res: Response) => {
+  // Get distinct brand names from products
   const brands = await prismaClient.product.findMany({
     select: {
       brand: true,
     },
-    distinct: ["brand"],
+    distinct: ["brand"], // Ensure unique brand names
   });
 
+  // Send the fetched brands in the response
   res.status(200).json({
     success: true,
     message: "Brands fetched",
@@ -247,11 +246,15 @@ export const getBrands = AsyncWrapper(async (req: Request, res: Response) => {
   });
 });
 
+// Route to export all products using worker threads
 export const allProductExport = AsyncWrapper(
   async (req: Request, res: Response) => {
+    // Create a new worker to handle product export
     const worker = new Worker(
       path.join(__dirname, "../Workers/productExport.worker.js")
     );
+
+    // Listen for messages from the worker and send the result back to the client
     worker.on("message", (result) => {
       if (result?.error) {
         res.status(500).json({ error: result });
@@ -260,6 +263,7 @@ export const allProductExport = AsyncWrapper(
       }
     });
 
+    // Handle errors in the worker
     worker.on("error", (error) => {
       console.error("Worker error:", error);
       res
@@ -267,6 +271,7 @@ export const allProductExport = AsyncWrapper(
         .json({ error: "An error occurred in the worker thread." });
     });
 
+    // Handle worker exit events
     worker.on("exit", (code) => {
       if (code !== 0) {
         console.error(`Worker stopped with exit code ${code}`);
@@ -276,6 +281,7 @@ export const allProductExport = AsyncWrapper(
   }
 );
 
+// Route to update product offers using worker threads
 export const updateOffer = AsyncWrapper(async (req: Request, res: Response) => {
   const worker = new Worker(
     path.resolve("dist/Workers/updateOffer.worker.js"),

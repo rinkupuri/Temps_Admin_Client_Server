@@ -57,7 +57,9 @@ const Page: FC<{ title: string }> = ({ title }) => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.NEXT_PUBLIC_SERVER_URL}/product/brand`)
+      .get(`${process.env.NEXT_PUBLIC_SERVER_URL}/product/brand`, {
+        withCredentials: true,
+      })
       .then((data) => {
         setBrand(data.data.brands);
       });

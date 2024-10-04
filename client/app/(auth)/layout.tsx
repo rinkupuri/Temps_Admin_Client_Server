@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/app/globals.css";
+import AuthProvider from "@/providers/AuthChecker";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -15,10 +16,8 @@ export default function Layout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} dark overflow-hidden h-screen`}>
-        {children}
-      </body>
-    </html>
+    <section className={`${inter.className} dark overflow-hidden h-screen`}>
+      <AuthProvider>{children}</AuthProvider>
+    </section>
   );
 }

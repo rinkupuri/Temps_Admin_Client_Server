@@ -11,6 +11,5 @@ export interface cartContextType {
 
 export interface cartAPiType {
   model: string;
-  fromLocation: string;
-  quantity: Stock;
+  quantity: number;
 }

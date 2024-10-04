@@ -1,7 +1,7 @@
 import path from "path";
 import sharp from "sharp";
 import prismaClient from "../prisma/prismaClient";
-import ExcelJs from "exceljs";
+import ExcelJs, { ValueType } from "exceljs";
 import { workerData, parentPort } from "worker_threads";
 import fs from "fs";
 
@@ -85,6 +85,15 @@ const exportCsv = async ({ workerData }) => {
       },
     });
   }
+  if (locationQueryArray?.includes("chd")) {
+    stockQuerry.push({
+      // @ts-ignore
+
+      chdStock: {
+        gt: 0,
+      },
+    });
+  }
 
   if (!locationQueryArray) {
     queryArray.push({
@@ -126,12 +135,14 @@ const exportCsv = async ({ workerData }) => {
   ];
 
   for (const [index, item] of product.entries()) {
-    console.log(path.join(__dirname, "../../", `${item.image}`));
     let imageBuffer = null;
     let imageId = null;
     try {
       console.log("test Run");
       try {
+        if (!item.image) {
+          continue;
+        }
         imageBuffer = await sharp(
           path.join(__dirname, "../../", `${item.image}`)
         )
@@ -168,6 +179,7 @@ const exportCsv = async ({ workerData }) => {
         name: item.brand,
         email: item.mrp,
         offer: item.consumerOffer ? item.consumerOffer + "% OFF" : "No Offer",
+        stock: item.totalStock,
       });
       row.height = 185;
       row.alignment = { vertical: "middle", horizontal: "center" };

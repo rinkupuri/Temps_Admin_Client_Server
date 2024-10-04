@@ -1,75 +1,80 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// This is the generator block to specify the Prisma client we are using
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client-js" // Specifies that Prisma will generate a client for JavaScript/TypeScript
 }
 
+// This is the datasource block to configure the database connection
 datasource db {
-  provider = "mongodb"
-  url      = env("DATABASE_URL")
+  provider = "mongodb" // Specifies MongoDB as the database provider
+  url      = env("DATABASE_URL") // The connection URL for MongoDB, stored in an environment variable
 }
 
+// Stock model to manage stock details
 model Stock {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  mtStock     Int     @default(0)
-  ibStock     Int     @default(0)
-  ddnStock    Int     @default(0)
-  dlStock     Int     @default(0)
-  mainStock   Int     @default(0)
-  smapleLine  Int     @default(0)
-  godwanStock Int     @default(0)
-  chdStock    Int     @default(0)
-  productId   String  @unique @db.ObjectId
-  Product     Product @relation(fields: [productId], references: [id])
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  mtStock     Int     @default(0) // Stock for 'mt', defaults to 0
+  ibStock     Int     @default(0) // Stock for 'ib', defaults to 0
+  ddnStock    Int     @default(0) // Stock   for 'ddn', defaults to 0
+  dlStock     Int     @default(0) // Stock for 'dl', defaults to 0
+  mainStock   Int     @default(0) // Main stock, defaults to 0
+  smapleLine  Int     @default(0) // Stock for sample line, defaults to 0
+  godwanStock Int     @default(0) // Stock in godown, defaults to 0
+  chdStock    Int     @default(0) // Stock in Chandigarh, defaults to 0
+  productId   String  @unique @db.ObjectId // Unique identifier for related product, mapped to ObjectId
+  Product     Product @relation(fields: [productId], references: [id]) // Relation to the Product model via productId
 }
 
+// Product model to store product information
 model Product {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  modelName     String @unique
-  brand         String
-  image         String
-  mrp           Int
-  consumerOffer Int    @default(0)
-  totalStock    Int    @default(0)
-  stockId       Stock?
+  id            String @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  modelName     String @unique // Unique model name of the product
+  brand         String // Brand of the product
+  image         String // Image URL of the product
+  mrp           Int // Maximum retail price of the product
+  consumerOffer Int    @default(0) // Offer or discount on the product, defaults to 0
+  totalStock    Int    @default(0) // Total stock available, defaults to 0
+  stockId       Stock? // Optional relation to the Stock model
 }
 
-model CartQuantity {
-  id          String @id @default(auto()) @map("_id") @db.ObjectId
-  mtStock     Int    @default(0)
-  ibStock     Int    @default(0)
-  ddnStock    Int    @default(0)
-  dlStock     Int    @default(0)
-  mainStock   Int    @default(0)
-  smapleLine  Int    @default(0)
-  godwanStock Int    @default(0)
-  chdStock    Int    @default(0)
-  cartId      String @unique @db.ObjectId
-  Cart        Cart   @relation(fields: [cartId], references: [id])
-}
-
+// Cart model to store user's cart items
 model Cart {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  cartId       String
-  fromLocation String        @default("")
-  model        String
-  quantity     CartQuantity?
+  id       String @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  cartId   String // Unique identifier for the cart
+  model    String // Product model added to the cart
+  quantity Int    @default(0) // Quantity of the product in the cart, defaults to 0
 }
 
+// Role enum to define user roles in the system
 enum Role {
-  ADMIN
-  USER
-  SUSER
+  ADMIN // Admin role with full permissions
+  USER // Standard user role
+  SUSER // Super user role with elevated permissions
 }
 
+// User model to store user details and credentials
 model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  email    String @unique
-  password String
-  role     Role   @default(USER)
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  name       String // User's name
+  email      String   @unique // Unique email address of the user
+  password   String // User's password for authentication
+  Permission String[] @default(["search"]) // Location of the user, defaults to an empty string
+  role       Role     @default(USER) // Role of the user, defaults to 'USER'
+}
+
+// webData model to store website-related data
+model webData {
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  menu   Menu?   @relation(fields: [menuId], references: [id]) // Optional relation to the Menu model
+  menuId String? @unique @db.ObjectId // Unique identifier for the related menu, mapped to ObjectId
+}
+
+// Menu model to define the structure of website menus
+model Menu {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  name       String // Name of the menu item
+  link       String   @unique // URL or path the menu item links to
+  image      String? // Optional image URL f
+  desc       String
+  permission String // Optional permission required to access this menu item
+  webData    webData? // Optional relation back to the webData model
 }
