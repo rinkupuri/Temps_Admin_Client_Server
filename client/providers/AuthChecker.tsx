@@ -20,9 +20,9 @@ const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       router.push("/");
     }
     if (!isLoading && error && !qUser) {
-      router.push("/login");
+      if (pathname !== "/register") router.push("/login");
     }
-  }, [qUser, isLoading, error, pathname]);
+  }, [qUser, isLoading, error, pathname, dispatch, router]);
 
   return <>{isLoading ? <Loading /> : !qUser && children}</>;
 };

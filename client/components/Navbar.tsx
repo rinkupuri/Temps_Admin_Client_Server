@@ -1,19 +1,13 @@
+"use client";
 import Link from "next/link";
 import React from "react";
-import {
-  BiBell,
-  BiCart,
-  BiExport,
-  BiImport,
-  BiNotification,
-  BiUser,
-} from "react-icons/bi";
-import { CiDiscount1, CiSettings } from "react-icons/ci";
-import { FcMultipleInputs } from "react-icons/fc";
+import { BiBell, BiCart, BiExport, BiUser } from "react-icons/bi";
 import { BulkInventryUpdate } from "./Dialog/InventryCheck";
 import { Import } from "./Dialog/Import";
+import { useGetUserQuery } from "@/Redux/RTK/auth.api";
 
 const Navbar = () => {
+  const { data, isLoading, error } = useGetUserQuery({});
   return (
     <div className="flex w-full justify-center items-center border-white  border-b-[1px]">
       <div className="h-[50px] w-11/12 flex justify-between items-center ">
@@ -24,7 +18,7 @@ const Navbar = () => {
           <BiBell title="Notification" size={18} />
           <Import />
           <BiExport title="Export" size={18} />
-          <BulkInventryUpdate />
+          {!isLoading && data?.role === "ADMIN" && <BulkInventryUpdate />}
           <Link title="Cart" href={"/cart"}>
             <BiCart size={18} />
           </Link>

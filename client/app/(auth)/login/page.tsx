@@ -1,13 +1,14 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { z } from "zod";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGoogle } from "@tabler/icons-react";
 import { BottomGradient } from "@/components/ui/BottomGradient";
-import { loginUser } from "@/Api/auth.api";
 import { toast } from "react-toastify";
+import { useLoginUserMutation } from "@/Redux/RTK/auth.api";
+import { useRouter } from "next/navigation";
 
 // Zod schema for validation
 const loginSchema = z.object({
@@ -17,9 +18,17 @@ const loginSchema = z.object({
 
 // LoginForm component
 export default function LoginForm() {
+  const router = useRouter();
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
     {}
   );
+  const [loginUser, { data, error, isLoading }] = useLoginUserMutation();
+
+  useEffect(() => {
+    if (!isLoading && data) {
+      router.push("/");
+    }
+  }, [data, error, isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,16 +48,25 @@ export default function LoginForm() {
         password: errorMessages.password?.[0],
       });
     } else {
-      toast.promise(loginUser({ email, password }), {
-        pending: "Logging in...",
-        success: "Logged in successfully",
-        error: {
-          render({ data }: { data: any }) {
-            // You can access the error message here
-            return data.message || "Failed to login";
+      toast.promise(
+        loginUser({ email, password }).then((res) => {
+          if (res?.data) {
+            return res.data;
+          }
+          // @ts-ignore
+          throw new Error(res.error?.data.message as string);
+        }),
+        {
+          pending: "Logging in...",
+          success: "Logged in successfully",
+          error: {
+            render({ data }: { data: any }) {
+              // You can access the error message here
+              return data.message || "Failed to login";
+            },
           },
-        },
-      });
+        }
+      );
     }
   };
 

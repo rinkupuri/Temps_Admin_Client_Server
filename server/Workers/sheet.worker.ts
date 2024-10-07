@@ -18,6 +18,13 @@ const exportCsv = async ({ workerData }) => {
         mode: "insensitive",
       },
     },
+    {
+      image: {
+        not: {
+          equals: "",
+        },
+      },
+    },
   ];
   let stockQuerry = [];
 
@@ -119,6 +126,8 @@ const exportCsv = async ({ workerData }) => {
     },
   });
 
+  console.log(product);
+
   console.log({
     product: product.length,
     location: "worker",
@@ -137,12 +146,12 @@ const exportCsv = async ({ workerData }) => {
   for (const [index, item] of product.entries()) {
     let imageBuffer = null;
     let imageId = null;
+    if (!item.image) {
+      continue;
+    }
     try {
       console.log("test Run");
       try {
-        if (!item.image) {
-          continue;
-        }
         imageBuffer = await sharp(
           path.join(__dirname, "../../", `${item.image}`)
         )

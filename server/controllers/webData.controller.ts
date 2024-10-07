@@ -34,9 +34,7 @@ export const createMenu = [
     }
 
     // Construct the URL for the uploaded image
-    const imageUrl = `${req.protocol}://${req.get(
-      "host"
-    )}/api/v1/images/webdata/${req.file.filename}`;
+    const imageUrl = `${process.env.HOST_URL}/api/v1/images/webdata/${req.file.filename}`;
 
     // Create the menu entry in the database
     const newMenu = await prisma.menu.create({

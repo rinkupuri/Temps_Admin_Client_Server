@@ -14,6 +14,9 @@ const swaggerOptions = {
       {
         url: process.env.HOST_URL,
       },
+      {
+        url: "https://backend.tempslifestyle.com",
+      },
     ],
   },
   apis: ["./routes/*.ts", "./controllers/*.ts"], // Path to TypeScript files for API docs

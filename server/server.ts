@@ -20,8 +20,39 @@ const server = http.createServer(app);
 import webData from "./routes/webData.routes";
 import UserRouter from "./routes/user.routes";
 import errorHandler from "./Error/ErrorHandler";
+import rateLimit from "express-rate-limit";
+import { AuthenticatedRequest } from "./types/auth.types";
+import sharp from "sharp";
+import fs from "fs";
 
-app.use("/api/v1/images", express.static(path.join(__dirname, "../images")));
+const imagesDir = path.join(__dirname, "../images");
+
+// Middleware to resize and compress images
+app.use("/api/v1/images", async (req, res, next) => {
+  const filePath = path.join(imagesDir, req.path);
+
+  // Check if the file exists
+  if (fs.existsSync(filePath)) {
+    // Process the image with Sharp
+    try {
+      const imageBuffer = await sharp(filePath)
+        .resize(1000, 1200, {
+          fit: "contain",
+        })
+        .toBuffer();
+
+      // Set headers for image response
+      res.set("Content-Type", "image/jpeg");
+      res.send(imageBuffer);
+    } catch (error) {
+      console.error("Error processing image:", error);
+      res.status(500).send("Error processing image");
+    }
+  } else {
+    // If the file doesn't exist, pass control to the static file handler
+    next();
+  }
+});
 
 app.use("/csv", express.static(path.join(__dirname, "../public/csv")));
 
@@ -48,6 +79,24 @@ app.use(express.json());
 
 // Use cookie-parser middleware to parse cookies
 app.use(cookieParser());
+
+// Define a rate limit
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minutes
+  max: 30, // Limit each IP to 30 requests per windowMs
+  message: {
+    success: false,
+    message: "Too many requests from this IP, please try again later.",
+  },
+  standardHeaders: true, // Send rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  keyGenerator: (req: AuthenticatedRequest) => {
+    return req.user ? req.user.id : req.ip; // Use user ID if available, otherwise fallback to IP
+  },
+});
+
+// Apply the rate limiting middleware to all requests
+app.use(limiter);
 
 app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "Welcome 2 Temps APi" });
@@ -106,6 +155,12 @@ app.use("*", (req: Request, res: Response) => {
   res.status(404).json({ message: "Not Found" });
 });
 app.use(errorHandler);
+
+
+
+
+
+
 
 
 server.listen(process.env.PORT || 80, () => {

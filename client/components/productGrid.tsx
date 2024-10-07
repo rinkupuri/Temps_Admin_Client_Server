@@ -1,5 +1,5 @@
 import { cart, Product } from "@/types/ProductCardTypes";
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import ProductCard from "./ProductCard";
 
 const ProductGrid: FC<{

@@ -4,7 +4,7 @@ import { urlsAndPaths, workerDataArray } from "../Data/cron.array";
 import path from "path";
 
 export const productImport = async () => {
-  cron.schedule("*/400 * * * *", async () => {
+  cron.schedule("*/100 * * * *", async () => {
     try {
       await Promise.all(
         urlsAndPaths.map(({ url, filePath }) =>

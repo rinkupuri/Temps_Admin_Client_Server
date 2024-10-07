@@ -38,6 +38,33 @@ export const extendedApi = apiSlice.injectEndpoints({
       }),
       transformResponse: (response: { user: User }) => {
         // Optionally process the response data
+        console.log(response);
+        if (!response?.user) throw new Error("Invalid Credentials");
+        return response?.user; // Return the user data
+      },
+      onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(setUser(data)); // Dispatch setUser with the user data
+        } catch (error: any) {
+          console.error("Login error:", error);
+          throw { message: error.message || "An unknown error occurred" };
+        }
+      },
+    }),
+
+    // Adding the createUser mutation for registration
+    createUser: builder.mutation({
+      query: ({ firstname, lastname, email, password, confirmPassword }) => ({
+        url: "/user/create",
+        method: "POST",
+        body: { firstname, lastname, email, password, confirmPassword },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      transformResponse: (response: { user: User }) => {
+        // Optionally process the response data
         return response?.user; // Return the user data
       },
       onQueryStarted: async (arg, { dispatch, queryFulfilled }) => {
@@ -45,6 +72,7 @@ export const extendedApi = apiSlice.injectEndpoints({
           const { data } = await queryFulfilled;
           dispatch(setUser(data)); // Dispatch setUser with the user data
         } catch (error) {
+          throw new Error(error as string);
           // Handle the error
         }
       },
@@ -53,4 +81,5 @@ export const extendedApi = apiSlice.injectEndpoints({
   overrideExisting: false, // This ensures the existing endpoints are not overwritten
 });
 
-export const { useGetUserQuery, useLoginUserMutation } = extendedApi;
+export const { useGetUserQuery, useLoginUserMutation, useCreateUserMutation } =
+  extendedApi;

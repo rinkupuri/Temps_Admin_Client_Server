@@ -1,16 +1,75 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import {
-  IconBrandGoogle,
-} from "@tabler/icons-react";
+import { IconBrandGoogle } from "@tabler/icons-react";
+import { useCreateUserMutation } from "@/Redux/RTK/auth.api";
+import { toast } from "react-toastify";
 
 export default function SignupFormDemo() {
+  const [createUser, { data, error, isLoading }] = useCreateUserMutation();
+  const [formData, setFormData] = useState({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const [errors, setErrors] = useState<any>({});
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (data) {
+    }
+    if (error) {
+      toast.error("Failed to create user");
+    }
+  }, [data, error, isLoading]);
+
+  const validate = () => {
+    let newErrors: any = {};
+    if (!formData.firstname) newErrors.firstname = "First name is required.";
+    if (!formData.lastname) newErrors.lastname = "Last name is required.";
+    if (!formData.email) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email address is invalid.";
+    }
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match.";
+    }
+    return newErrors;
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(e.target);
+    const validationErrors = validate();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length === 0) {
+      // Submit form if no errors
+      (async () => {
+        try {
+          toast.promise(createUser(formData).unwrap(), {
+            pending: "Creating user...",
+            success: "User created successfully",
+            error: "Failed to create user",
+          });
+        } catch (err) {
+          console.error("Failed to create user: ", err);
+        }
+      })();
+      // You can now handle the form submission here (e.g., sending data to an API)
+    }
   };
 
   return (
@@ -28,32 +87,72 @@ export default function SignupFormDemo() {
             <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
               <LabelInputContainer>
                 <Label htmlFor="firstname">First name</Label>
-                <Input id="firstname" placeholder="Tyler" type="text" />
+                <Input
+                  id="firstname"
+                  name="firstname"
+                  placeholder="Example"
+                  type="text"
+                  value={formData.firstname}
+                  onChange={handleChange}
+                />
+                {errors.firstname && (
+                  <p className="text-red-500">{errors.firstname}</p>
+                )}
               </LabelInputContainer>
               <LabelInputContainer>
                 <Label htmlFor="lastname">Last name</Label>
-                <Input id="lastname" placeholder="Durden" type="text" />
+                <Input
+                  id="lastname"
+                  name="lastname"
+                  placeholder="User"
+                  type="text"
+                  value={formData.lastname}
+                  onChange={handleChange}
+                />
+                {errors.lastname && (
+                  <p className="text-red-500">{errors.lastname}</p>
+                )}
               </LabelInputContainer>
             </div>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
-                placeholder="projectmayhem@fc.com"
+                name="email"
+                placeholder="sample@example.com"
                 type="email"
+                value={formData.email}
+                onChange={handleChange}
               />
+              {errors.email && <p className="text-red-500">{errors.email}</p>}
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="password" />
+              <Input
+                id="password"
+                name="password"
+                placeholder="••••••••"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {errors.password && (
+                <p className="text-red-500">{errors.password}</p>
+              )}
             </LabelInputContainer>
             <LabelInputContainer className="mb-8">
-              <Label htmlFor="twitterpassword">Your twitter password</Label>
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
-                id="twitterpassword"
+                id="confirmPassword"
+                name="confirmPassword"
                 placeholder="••••••••"
-                type="twitterpassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
               />
+              {errors.confirmPassword && (
+                <p className="text-red-500">{errors.confirmPassword}</p>
+              )}
             </LabelInputContainer>
 
             <button
@@ -69,7 +168,7 @@ export default function SignupFormDemo() {
             <div className="flex flex-col space-y-4">
               <button
                 className=" relative group/btn flex space-x-2 items-center justify-center  px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="submit"
+                type="button"
               >
                 <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
                 <span className="text-neutral-700 dark:text-neutral-300 text-sm">

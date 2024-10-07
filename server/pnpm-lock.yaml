@@ -41,6 +41,9 @@ importers:
       cors:
         specifier: ^2.8.5
         version: 2.8.5
+      csv-parser:
+        specifier: ^3.0.0
+        version: 3.0.0
       csv2json:
         specifier: ^2.0.2
         version: 2.0.2
@@ -59,6 +62,9 @@ importers:
       express:
         specifier: ^4.19.2
         version: 4.19.2
+      express-rate-limit:
+        specifier: ^7.4.1
+        version: 7.4.1(express@4.19.2)
       express-validator:
         specifier: ^7.2.0
         version: 7.2.0
@@ -1279,6 +1285,11 @@ packages:
     engines: {node: '>= 8.16.0'}
     hasBin: true
 
+  csv-parser@3.0.0:
+    resolution: {integrity: sha512-s6OYSXAK3IdKqYO33y09jhypG/bSDHPuyCme/IdEHfWpLf/jKcpitVFyOC6UemgGk8v7Q5u2XE0vvwmanxhGlQ==}
+    engines: {node: '>= 10'}
+    hasBin: true
+
   csv2json@2.0.2:
     resolution: {integrity: sha512-YVZ72OehSs9+j2lME10osmJNHeI0dcHlX+qNq8xcR0T+Rt8WaOCchKiEVF3GsK4Of3z/LE64x0ba1cpULmAclw==}
     hasBin: true
@@ -1535,6 +1546,12 @@ packages:
   expect@29.7.0:
     resolution: {integrity: sha512-2Zks0hf1VLFYI1kbh0I5jP3KHHyCHpkfyHBzsSXRFgl/Bg9mWYfMW8oD+PdMPlEwy5HNsR9JutYy6pMeOh61nw==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
+
+  express-rate-limit@7.4.1:
+    resolution: {integrity: sha512-KS3efpnpIDVIXopMc65EMbWbUht7qvTCdtCR2dD/IZmi9MIkopYESwyRqLgv8Pfu589+KqDqOdzJWW7AHoACeg==}
+    engines: {node: '>= 16'}
+    peerDependencies:
+      express: 4 || 5 || ^5.0.0-beta.1
 
   express-validator@7.2.0:
     resolution: {integrity: sha512-I2ByKD8panjtr8Y05l21Wph9xk7kk64UMyvJCl/fFM/3CTJq8isXYPLeKW/aZBCdb/LYNv63PwhY8khw8VWocA==}
@@ -4737,6 +4754,10 @@ snapshots:
       minimist: 1.2.8
       through2: 3.0.2
 
+  csv-parser@3.0.0:
+    dependencies:
+      minimist: 1.2.8
+
   csv2json@2.0.2:
     dependencies:
       csv-parser: 2.3.5
@@ -4991,6 +5012,10 @@ snapshots:
       jest-matcher-utils: 29.7.0
       jest-message-util: 29.7.0
       jest-util: 29.7.0
+
+  express-rate-limit@7.4.1(express@4.19.2):
+    dependencies:
+      express: 4.19.2
 
   express-validator@7.2.0:
     dependencies:
@@ -6579,6 +6604,7 @@ snapshots:
       download: 8.0.0
       exceljs: 4.4.0
       express: 4.19.2
+      express-rate-limit: 7.4.1(express@4.19.2)
       express-validator: 7.2.0
       fs: 0.0.1-security
       joi: 17.13.3

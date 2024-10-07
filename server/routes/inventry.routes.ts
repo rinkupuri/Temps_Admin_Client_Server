@@ -44,7 +44,7 @@ export default router;
 
 /**
  * @swagger
- * /api/v1/updatemany:
+ * /api/v1/inventry/updatemany:
  *   post:
  *     summary: Update many product stocks to 0
  *     tags: [Inventory]
@@ -57,7 +57,7 @@ export default router;
 
 /**
  * @swagger
- * /api/v1/exportmodelwise:
+ * /api/v1/inventry/exportmodelwise:
  *   post:
  *     summary: Export stock model-wise
  *     tags: [Inventory]
@@ -80,7 +80,7 @@ export default router;
 
 /**
  * @swagger
- * /api/v1/updatecsv:
+ * /api/v1/inventry/updatecsv:
  *   post:
  *     summary: Update inventory data using CSV file
  *     tags: [Inventory]

@@ -3,6 +3,7 @@ import {
   allProductExport,
   createProduct,
   createProductCSV,
+  deleteProductsByBrand,
   getBrands,
   getProducts,
   searchProduct,
@@ -22,7 +23,7 @@ const upload = multer({ dest: "uploads/" });
  * @desc    Create a new product
  * @access  Public
  */
-router.post("/create", authMiddleware,checkPermission('admin') ,createProduct);
+router.post("/create", authMiddleware, checkPermission("admin"), createProduct);
 
 /**
  * @route   POST /createcsv
@@ -30,35 +31,46 @@ router.post("/create", authMiddleware,checkPermission('admin') ,createProduct);
  * @access  Public
  * @param   {file} csvData - The CSV file containing product data
  */
-router.post("/createcsv", authMiddleware,checkPermission('admin'), upload.single("csvData"), createProductCSV);
+router.post(
+  "/createcsv",
+  authMiddleware,
+  checkPermission("admin"),
+  upload.single("csvData"),
+  createProductCSV
+);
 
 /**
  * @route   GET /get
  * @desc    Get a list of all products
  * @access  Public
  */
-router.get("/get", authMiddleware,checkPermission('products'), getProducts);
+router.get("/get", authMiddleware, checkPermission("products"), getProducts);
 
 /**
  * @route   GET /search
  * @desc    Search for a product by query parameters
  * @access  Public
  */
-router.get("/search", authMiddleware,checkPermission('search'), searchProduct);
+router.get("/search", authMiddleware, checkPermission("search"), searchProduct);
 
 /**
  * @route   GET /brand
  * @desc    Get a list of product brands
  * @access  Public
  */
-router.get("/brand",authMiddleware, checkPermission("products"), getBrands);
+router.get("/brand", authMiddleware, checkPermission("products"), getBrands);
 
 /**
  * @route   GET /exportall
  * @desc    Export all product data
  * @access  Public
  */
-router.get("/exportall",authMiddleware , checkPermission('admin'), allProductExport);
+router.get(
+  "/exportall",
+  authMiddleware,
+  checkPermission("admin"),
+  allProductExport
+);
 
 /**
  * @route   POST /offerupdate
@@ -66,7 +78,20 @@ router.get("/exportall",authMiddleware , checkPermission('admin'), allProductExp
  * @access  Public
  * @param   {file} csvData - The CSV file containing offer updates
  */
-router.post("/offerupdate",authMiddleware, upload.single("csvData"), updateOffer);
+router.post(
+  "/offerupdate",
+  authMiddleware,
+  upload.single("csvData"),
+  updateOffer
+);
+
+/**
+ * @route   DELETE /brand/:brandName
+ * @desc    Delete all products by brand name
+ * @access  Private (Admin only)
+ * @param   {string} brandName - The name of the brand for which products will be deleted
+ */
+router.delete("/brand/:brandName", authMiddleware, deleteProductsByBrand);
 
 
 
@@ -238,6 +263,68 @@ router.post("/offerupdate",authMiddleware, upload.single("csvData"), updateOffer
  *       500:
  *         description: Error processing CSV
  */
+
+
+/**
+ * @swagger
+ * /api/v1/product/brand/{brandName}:
+ *   delete:
+ *     summary: Delete all products by brand name
+ *     tags: [Products]
+ *     parameters:
+ *       - in: path
+ *         name: brandName
+ *         required: true
+ *         description: The name of the brand whose products you want to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully deleted products for the given brand
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized access (Admin only)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Brand not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ */
+
 
 
 export default router;

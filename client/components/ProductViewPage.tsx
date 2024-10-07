@@ -24,6 +24,7 @@ import axios from "axios";
 import { Product, productMeta } from "@/types/ProductCardTypes";
 import { getProductsAPI } from "@/Api/product.api";
 import SkeletonGrid from "./SkeletonGrid";
+import { useGetProductsQuery } from "@/Redux/RTK/product.api";
 const ProductGrid = lazy(() => import("@/components/productGrid"));
 
 const Page: FC<{ title: string }> = ({ title }) => {
@@ -38,22 +39,24 @@ const Page: FC<{ title: string }> = ({ title }) => {
   const [productData, setProductData] = useState<Product[]>();
   const [brandQuerry, setBrandQuerry] = useState(qurry.get("brand") || "all");
   const [loading, setLoading] = useState(true);
+  const { data, isLoading, error } = useGetProductsQuery({
+    page,
+    limit,
+    brandQuerry,
+  });
 
   useEffect(() => {
     setBrandQuerry(qurry.get("brand") || "all");
   }, [qurry]);
 
   useEffect(() => {
-    setLoading(true);
-    getProductsAPI({ page, limit, brandQuerry }).then((data) => {
-      setProductData(data.products);
-      setProductMeta(data.meta);
-      setLoading(false);
-    });
-    return () => {
-      setProductData([]);
-    };
-  }, [page, limit, brandQuerry, pathName]);
+    // setLoading(true);
+    // getProductsAPI({ page, limit, brandQuerry }).then((data) => {
+    setProductData((prev) => data?.products);
+    setProductMeta(data?.meta);
+    // setLoading(false);
+    // });
+  }, [page, limit, brandQuerry, pathName, data]);
 
   useEffect(() => {
     axios
@@ -103,7 +106,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
             </div>
           </div>
         </div>
-        {loading ? (
+        {isLoading || !productData ? (
           <SkeletonGrid />
         ) : (
           <ProductGrid
@@ -134,7 +137,8 @@ const Page: FC<{ title: string }> = ({ title }) => {
                 setPage((prev: number) => prev + 1);
               }}
               className={`${
-                productMeta?.currentPage === productMeta?.totalPages
+                // @ts-ignore
+                productMeta?.currentPage >= productMeta?.totalPages
                   ? "hidden"
                   : "cursor-pointer"
               } bg-black flex justify-center items-center gap-2 py-2 px-4 rounded-md`}

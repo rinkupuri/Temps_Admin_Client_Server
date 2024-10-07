@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import React from "react";
 import Link from "next/link";
 import { useGetMenusQuery } from "@/Redux/RTK/api";
+import Image from "next/image";
 
 const Page = () => {
   const { data, isLoading } = useGetMenusQuery({});
@@ -14,10 +15,13 @@ const Page = () => {
             {data?.map((value, index) => (
               <Link key={index} href={value.link}>
                 <Card className="w-[250px] h-[250px] py-2 flex justify-c  enter items-center flex-col">
-                  <img
+                  <Image
+                    width={200}
+                    height={200}
+                    loading="lazy"
                     className="w-full object-contain my-3 h-[70px]"
                     src={value.image}
-                    alt=""
+                    alt={value.name}
                   />
                   <CardHeader>{value.name}</CardHeader>
                   <CardContent>

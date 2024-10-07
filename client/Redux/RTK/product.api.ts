@@ -1,5 +1,6 @@
 import { apiSlice } from "@/Redux/RTK/slicer"; // Assuming your main apiSlice is in this file
-import { Product } from "@/types/ProductCardTypes";
+import { Product, productMeta } from "@/types/ProductCardTypes";
+import { Metadata } from "next";
 
 // Inject the product-related endpoints into the existing API slice
 export const extendedApi = apiSlice.injectEndpoints({
@@ -24,7 +25,10 @@ export const extendedApi = apiSlice.injectEndpoints({
         params: { brand: brandQuerry, page, limit },
         credentials: "include", // Ensure cookies are included
       }),
-      transformResponse: (response) => response, // Return the full response (pagination, etc.)
+      transformResponse: (response: {
+        products: Product[];
+        meta: productMeta;
+      }) => response, // Return the full response (pagination, etc.)
     }),
   }),
   overrideExisting: false, // Prevent overwriting existing endpoints

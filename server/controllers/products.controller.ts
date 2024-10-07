@@ -4,6 +4,9 @@ import prismaClient from "../prisma/prismaClient";
 import { AsyncWrapper } from "../Error/AsyncWrapper";
 import { Worker } from "worker_threads";
 import path from "path";
+import { AuthenticatedRequest } from "../types/auth.types";
+import prisma from "../prisma/prismaClient";
+import fs from "fs";
 
 // Route to create a single product
 export const createProduct = AsyncWrapper(
@@ -307,3 +310,56 @@ export const updateOffer = AsyncWrapper(async (req: Request, res: Response) => {
     }
   });
 });
+
+// Delete products by brand name
+export const deleteProductsByBrand = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    // Check if the user is an admin
+    if (req.user.role !== "ADMIN") {
+      return res.status(403).json({
+        message:
+          "Forbidden: You do not have permission to perform this action.",
+      });
+    }
+
+    const { brandName } = req.params; // Assuming brand name is passed as a URL parameter
+
+    // Delete products with the specified brand name
+    const deletedProducts = await prisma.product.deleteMany({
+      where: {
+        brand: brandName,
+      },
+    });
+
+    if (deletedProducts.count === 0) {
+      return res
+        .status(404)
+        .json({ message: "No products found for this brand." });
+    }
+
+    // Convert brand name to lowercase and replace spaces with underscores for the folder name
+    const folderName = brandName.toLowerCase().replace(/\s+/g, "_");
+    const folderPath = path.resolve(`images/${folderName}`); // Assuming images are in 'images/' directory
+
+    // Check if the folder exists
+    if (fs.existsSync(folderPath)) {
+      // Remove the directory and its contents
+      fs.rmdirSync(folderPath, { recursive: true }); // Recursive flag to delete all contents
+      console.log(`Deleted folder: ${folderPath}`);
+    } else {
+      console.log(`Folder does not exist: ${folderPath}`);
+    }
+
+    return res.status(200).json({
+      message: `${deletedProducts.count} products deleted successfully.`,
+    });
+  } catch (error) {
+    console.error("Error deleting products:", error);
+    return res
+      .status(500)
+      .json({ message: "An error occurred while deleting products." });
+  }
+};
