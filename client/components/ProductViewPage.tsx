@@ -51,6 +51,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   );
 
   useEffect(() => {
+    setProductData([]);
     setBrandQuerry(qurry.get("brand") || "all");
   }, [qurry]);
 
@@ -130,38 +131,6 @@ const Page: FC<{ title: string }> = ({ title }) => {
               setProductData={setProductData}
             />
           )}
-          {/* Page Navigation  */}
-          <div className="flex p-1 left-0 rounded-md w-full justify-between items-center bg-zinc-800 h-[50px]">
-            <div className="flex justify-start items-center flex-[1]">
-              <button
-                onClick={() => {
-                  page && setPage((prev: number) => prev - 1);
-                }}
-                disabled={page ? false : true}
-                className={`bg-black ${
-                  // @ts-ignore
-                  productMeta?.currentPage > 1 ? "cursor-pointer" : "hidden"
-                } flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
-              >
-                <FcPrevious size={15} /> Previous
-              </button>
-            </div>
-            <div className="flex justify-end items-center flex-[1]">
-              <button
-                onClick={() => {
-                  setPage((prev: number) => prev + 1);
-                }}
-                className={`${
-                  // @ts-ignore
-                  productMeta?.currentPage >= productMeta?.totalPages
-                    ? "hidden"
-                    : "cursor-pointer"
-                } bg-black flex justify-center items-center gap-2 py-2 px-4 rounded-md`}
-              >
-                Next <FcNext size={15} />
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </>
