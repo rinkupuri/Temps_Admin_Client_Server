@@ -1,18 +1,9 @@
 "use client";
 import React, { FC, useEffect, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { cart, Product } from "@/types/ProductCardTypes";
 import { usePathname } from "next/navigation";
 import { addToCartAPI } from "@/Api/Cart.api";
-import noPic from '@/public/no-photo.png'
+import noPic from "@/public/no-photo.png";
 
 const ProductCard: FC<{
   product: Product;
@@ -21,7 +12,6 @@ const ProductCard: FC<{
   setCart: (cart: any) => void;
 }> = ({ product, cart, setCart, cartData }) => {
   const path = usePathname();
-
 
   const [quantity, setQuantity] = useState(cartData?.quantity || 0);
 
@@ -32,7 +22,7 @@ const ProductCard: FC<{
         quantity: quantity,
       });
     }
-  }, [quantity]);
+  }, [product.modelName, quantity]);
 
   const handleQuantityChange = (key: string, increment: boolean) => {
     setQuantity((prev: any) => (increment ? prev + 1 : Math.max(0, prev - 1)));
@@ -75,7 +65,11 @@ const ProductCard: FC<{
     <div className="relative overflow-hidden border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
       <img
         className="object-contain rounded-t-md w-full h-auto"
-        src={product.image ? process.env.NEXT_PUBLIC_SERVER_URL+product.image : noPic.src}
+        src={
+          product.image
+            ? process.env.NEXT_PUBLIC_SERVER_URL + product.image
+            : noPic.src
+        }
         alt=""
       />
       <div

@@ -22,37 +22,9 @@ import UserRouter from "./routes/user.routes";
 import errorHandler from "./Error/ErrorHandler";
 import rateLimit from "express-rate-limit";
 import { AuthenticatedRequest } from "./types/auth.types";
-import sharp from "sharp";
-import fs from "fs";
-
-const imagesDir = path.join(__dirname, "../images");
 
 // Middleware to resize and compress images
-app.use("/api/v1/images", async (req, res, next) => {
-  const filePath = path.join(imagesDir, req.path);
-
-  // Check if the file exists
-  if (fs.existsSync(filePath)) {
-    // Process the image with Sharp
-    try {
-      const imageBuffer = await sharp(filePath)
-        .resize(1000, 1200, {
-          fit: "contain",
-        })
-        .toBuffer();
-
-      // Set headers for image response
-      res.set("Content-Type", "image/jpeg");
-      res.send(imageBuffer);
-    } catch (error) {
-      console.error("Error processing image:", error);
-      res.status(500).send("Error processing image");
-    }
-  } else {
-    // If the file doesn't exist, pass control to the static file handler
-    next();
-  }
-});
+app.use("/api/v1/images", express.static(path.resolve("images")));
 
 app.use("/csv", express.static(path.join(__dirname, "../public/csv")));
 

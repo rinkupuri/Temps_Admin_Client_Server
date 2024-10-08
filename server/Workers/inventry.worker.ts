@@ -58,7 +58,7 @@ const processCSV = async (csvFilePath: string) => {
               smapleLine: parseInt(value["Sample Line"]) || 0,
             },
           });
-
+          console.log(value["Model No."], "updated");
           successfullyUpdated += 1;
         } catch (err) {
           errorArray.push(

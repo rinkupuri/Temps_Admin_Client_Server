@@ -5,12 +5,25 @@ import ProductCard from "@/components/ProductCard";
 import ProductGrid from "@/components/productGrid";
 import SkeletonGrid from "@/components/SkeletonGrid";
 import { PlaceholdersAndVanishInput } from "@/components/ui/placeholders-and-vanish-input";
+import {
+  useGetProductsQuery,
+  useSearchProductQuery,
+} from "@/Redux/RTK/product.api";
 import { Product } from "@/types/ProductCardTypes";
 import { useEffect, useState } from "react";
 const Page = () => {
   const [searchString, setSearchString] = useState("");
   const [product, setProduct] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [limit, setLimit] = useState(30);
+  const { data, isLoading, error } = useSearchProductQuery(
+    {
+      searchString,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
 
   const placeholders = [
     "Search With Model Number",
@@ -18,21 +31,13 @@ const Page = () => {
     "Is this Available?",
     "Search All Brands",
   ];
-  useEffect(() => {
-    setLoading(true);
-    getProductsAPI({ brandQuerry: "all", limit: 10, page: 1 }).then((data) => {
-      setProduct(data.products);
-      setLoading(false);
-    });
-  }, []);
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // @ts-ignore
     setLoading(true);
-    searchProductAPI({ queryModel: searchString }).then((data) => {
-      setProduct(data);
-      setLoading(false);
-    });
+    // searchProductAPI({ queryModel: searchString }).then((data) => {
+    //   setProduct(data);
+    // });
   };
   return (
     <>
@@ -46,7 +51,7 @@ const Page = () => {
               onSubmit={onSubmit}
             />
           </div>
-          {loading ? (
+          {isLoading ? (
             <SkeletonGrid />
           ) : product.length === 0 ? (
             <div className="flex justify-center items-center h-[clac(100vh_-_150px)] w-full">
@@ -54,7 +59,18 @@ const Page = () => {
             </div>
           ) : (
             <div className="flex w-full h-[calc(100vh_-_200px)]">
-              <ProductGrid productData={product} setCart={() => {}} cart={[]} />
+              <ProductGrid
+                setProductData={setProduct}
+                page={page}
+                // @ts-ignore
+                data={data}
+                setPage={setPage}
+                brandQuerry=""
+                limit={limit}
+                productData={product}
+                setCart={() => {}}
+                cart={[]}
+              />
             </div>
           )}
         </div>

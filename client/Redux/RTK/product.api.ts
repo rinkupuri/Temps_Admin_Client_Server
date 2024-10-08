@@ -7,7 +7,7 @@ export const extendedApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Inject `searchProduct` endpoint
     searchProduct: builder.query({
-      query: (queryModel) => ({
+      query: ({ queryModel }) => ({
         url: `/product/search`,
         method: "GET",
         params: { query: queryModel },

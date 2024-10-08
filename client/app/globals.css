@@ -63,6 +63,14 @@ input::-webkit-outer-spin-button,
       input::-webkit-inner-spin-button {
          -webkit-appearance: none;
       }
+.lazy-image {
+  opacity: 0;
+  transition: opacity 0.8s ease, transform 0.8s ease; /* Transition for the animation */
+}
+
+.lazy-image-visible {
+  opacity: 1;
+}
 
 @layer base {
   * {
