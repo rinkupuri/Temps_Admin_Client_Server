@@ -7,14 +7,19 @@ export const extendedApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Inject `searchProduct` endpoint
     searchProduct: builder.query({
-      query: ({ queryModel }) => ({
-        url: `/product/search`,
-        method: "GET",
-        params: { query: queryModel },
-        credentials: "include", // Ensure cookies are included
-      }),
-      transformResponse: (response: { products: Product }) =>
-        response?.products, // Return only the products
+      query: ({ queryModel }) => {
+        // Conditionally add the `query` parameter only if `queryModel` is not empty
+        const params = queryModel ? { query: queryModel } : {};
+
+        return {
+          url: `/product/search`,
+          method: "GET",
+          params, // Use the conditionally constructed params
+          credentials: "include",
+        };
+      },
+      transformResponse: (response: { products: Product[] }) =>
+        response?.products,
     }),
 
     // Inject `getProducts` endpoint

@@ -13,12 +13,13 @@ import { Product } from "@/types/ProductCardTypes";
 import { useEffect, useState } from "react";
 const Page = () => {
   const [searchString, setSearchString] = useState("");
-  const [product, setProduct] = useState<Product[]>([]);
+  const [fieldvalue, setFieldValue] = useState("");
+  const [product, setProduct] = useState<Product[] | undefined>([]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(30);
   const { data, isLoading, error } = useSearchProductQuery(
     {
-      searchString,
+      queryModel: searchString,
     },
     {
       refetchOnMountOrArgChange: true,
@@ -31,10 +32,14 @@ const Page = () => {
     "Is this Available?",
     "Search All Brands",
   ];
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  useEffect(() => {
+    setProduct(data);
+  }, [data]);
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // @ts-ignore
-    setLoading(true);
+    setSearchString(fieldvalue);
     // searchProductAPI({ queryModel: searchString }).then((data) => {
     //   setProduct(data);
     // });
@@ -47,13 +52,13 @@ const Page = () => {
           <div className="flex my-3">
             <PlaceholdersAndVanishInput
               placeholders={placeholders}
-              onChange={(e) => setSearchString(e.target.value)}
+              onChange={(e) => setFieldValue(e.target.value)}
               onSubmit={onSubmit}
             />
           </div>
           {isLoading ? (
             <SkeletonGrid />
-          ) : product.length === 0 ? (
+          ) : product?.length === 0 ? (
             <div className="flex justify-center items-center h-[clac(100vh_-_150px)] w-full">
               <h1>No Product Found</h1>
             </div>
