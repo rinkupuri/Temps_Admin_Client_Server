@@ -9,6 +9,7 @@ import {
   updateUser,
 } from "../controllers/user.controllers";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import checkPermission from "../middlewares/checkPermission";
 
 const router = Router();
 
@@ -29,7 +30,7 @@ const router = Router();
  *       200:
  *         description: A list of users
  */
-router.get("/getall", authMiddleware, getAllUsers);
+router.get("/getall", authMiddleware, checkPermission("admin"), getAllUsers);
 
 /**
  * @swagger
@@ -47,7 +48,7 @@ router.get("/getall", authMiddleware, getAllUsers);
  *       201:
  *         description: User created successfully
  */
-router.post("/create", authMiddleware, createUser);
+router.post("/create", authMiddleware, checkPermission("admin"), createUser);
 
 /**
  * @swagger
@@ -64,7 +65,7 @@ router.post("/create", authMiddleware, createUser);
  *       200:
  *         description: A user object
  */
-router.get("/get/:id", authMiddleware, getUserById);
+router.get("/get/:id", authMiddleware, checkPermission("admin"), getUserById);
 
 /**
  * @swagger
@@ -87,7 +88,7 @@ router.get("/get/:id", authMiddleware, getUserById);
  *       200:
  *         description: User updated successfully
  */
-router.put("/update/:id", authMiddleware, updateUser);
+router.put("/update/:id", authMiddleware, checkPermission("admin"), updateUser);
 
 /**
  * @swagger
@@ -104,6 +105,11 @@ router.put("/update/:id", authMiddleware, updateUser);
  *       204:
  *         description: User deleted successfully
  */
-router.delete("/delete/:id", authMiddleware, deleteUser);
+router.delete(
+  "/delete/:id",
+  authMiddleware,
+  checkPermission("admin"),
+  deleteUser
+);
 
 export default router;

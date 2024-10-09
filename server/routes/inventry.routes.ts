@@ -7,6 +7,7 @@ import {
   updateMany,
 } from "../controllers/inventry.controller";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import checkPermission from "../middlewares/checkPermission";
 
 const upload = multer({ dest: "uploads/" });
 
@@ -22,6 +23,7 @@ router.post(
   "/updatecsv",
   authMiddleware,
   upload.single("csvData"),
+  checkPermission("admin"),
   updateInventryData
 );
 
@@ -30,14 +32,24 @@ router.post(
  * @desc    Update multiple inventory items at once
  * @access  Private
  */
-router.post("/updatemany", authMiddleware, updateMany);
+router.post(
+  "/updatemany",
+  authMiddleware,
+  checkPermission("admin"),
+  updateMany
+);
 
 /**
  * @route   POST /exportmodelwise
  * @desc    Export inventory data model-wise
  * @access  Private
  */
-router.post("/exportmodelwise", authMiddleware, exportModelWiseStock);
+router.post(
+  "/exportmodelwise",
+  authMiddleware,
+  checkPermission("export"),
+  exportModelWiseStock
+);
 
 
 export default router;

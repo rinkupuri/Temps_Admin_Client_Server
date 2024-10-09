@@ -82,6 +82,7 @@ router.post(
   "/offerupdate",
   authMiddleware,
   upload.single("csvData"),
+  checkPermission("admin"),
   updateOffer
 );
 

@@ -1,6 +1,7 @@
 import express from "express";
 import { getUser, login, register } from "../controllers/auth.controllers";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import checkPermission from "../middlewares/checkPermission";
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post("/login", login);
  * @desc    User registration
  * @access  Public
  */
-router.post("/register", register);
+router.post("/register", authMiddleware, checkPermission("admin"), register);
 
 /**
  * @route   GET /get

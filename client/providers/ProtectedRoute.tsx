@@ -27,9 +27,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
     // Check for user permissions on the current path
     if (user?.user) {
-      const hasPermission = user.user.Permission?.includes(
-        pathname.replace("/", "")
-      );
+      const hasPermission =
+        user.user.role === "ADMIN" ||
+        user.user.Permission?.includes(pathname.replace("/", ""));
 
       // Redirect to home if user does not have permission for the current path
       if (!hasPermission && pathname !== "/") {
@@ -39,9 +39,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }, [data, dispatch, isError, isLoading, pathname, router, user]);
 
   // Render children only if user has permission
-  const hasPermission = user?.user?.Permission?.includes(
-    pathname.replace("/", "")
-  );
+  const hasPermission =
+    user?.user?.role === "ADMIN" ||
+    user?.user?.Permission?.includes(pathname.replace("/", ""));
 
   return (
     <>

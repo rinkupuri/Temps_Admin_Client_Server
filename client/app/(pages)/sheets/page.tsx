@@ -142,7 +142,11 @@ export default function CardWithForm() {
                       queryString.length
                         ? `locationQuery=${queryString.join()}`
                         : ""
-                    }`
+                    }`,
+                    "_",
+                    {
+                      withCredentials: true,
+                    }
                   )
                   .then((res) => {
                     setLoading(false);
