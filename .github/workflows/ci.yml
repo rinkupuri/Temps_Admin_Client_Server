@@ -1,0 +1,31 @@
+# .github/workflows/ci.yml
+name: CI Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: self-hosted  # Specify that the job should run on a self-hosted runner
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Specify the version of Node.js you need
+
+      - name: Install pnpm
+        run: npm install -g pnpm  # Command to install your project's dependencies
+      - name: Install pnpm
+        run: npm install -g tsc  # Command to install your project's dependencies
+
+      - name: Run Build
+        run: pnpm install  # Command to run your tests
