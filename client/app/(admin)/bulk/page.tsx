@@ -79,8 +79,11 @@ export default function UploadFormWithDropdown() {
         },
         withCredentials: true,
       });
+      if (response.data.link) {
+        window.open(response.data.link, "_blank");
+      }
 
-      alert("File uploaded successfully!");
+      
     } catch (error) {
       alert("An error occurred while uploading the file.");
     } finally {
