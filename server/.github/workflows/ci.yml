@@ -28,4 +28,10 @@ jobs:
         run: npm install -g tsc  # Command to install your project's dependencies
 
       - name: Run Build
-        run: pnpm install  # Command to run your tests
+        run: rm -rf client  # Command to run your tests
+
+      - name: Run Build
+        run: cd server && pnpm install  # Command to run your tests
+
+      - name: compile code
+        run: tsc  # Command to run your tests
