@@ -25,6 +25,10 @@ import { useEffect, useState } from "react";
 // Example JSON for dropdown data
 const dropdownData = [
   {
+    name: "Create Product",
+    api: `${process.env.NEXT_PUBLIC_SERVER_URL}/product/createcsv`,
+  },
+  {
     name: "Create Image Sheet",
     api: `${process.env.NEXT_PUBLIC_SERVER_URL}/sheet/create`,
   },
