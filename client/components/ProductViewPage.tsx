@@ -39,7 +39,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   const [brand, setBrand] = useState<Array<{ brand: string }>>([]);
   const [productData, setProductData] = useState<Product[]>();
   const [brandQuerry, setBrandQuerry] = useState(qurry.get("brand") || "all");
-  const { data, isLoading, error } = useGetProductsQuery(
+  const { data, isLoading, isFetching, error } = useGetProductsQuery(
     {
       page,
       limit,
@@ -53,6 +53,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   useEffect(() => {
     setProductData([]);
     setBrandQuerry(qurry.get("brand") || "all");
+    setPage(1);
   }, [qurry]);
 
   useEffect(() => {
@@ -116,13 +117,14 @@ const Page: FC<{ title: string }> = ({ title }) => {
               </div>
             </div>
           </div>
-          {isLoading ? (
+          {isFetching && !productData?.length ? (
             <SkeletonGrid />
           ) : (
             <ProductGrid
               brandQuerry={brandQuerry}
               limit={limit}
               page={page}
+              isFetching={isFetching}
               data={data}
               setPage={setPage}
               cart={cart}

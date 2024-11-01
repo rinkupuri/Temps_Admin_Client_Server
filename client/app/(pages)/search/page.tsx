@@ -17,7 +17,7 @@ const Page = () => {
   const [product, setProduct] = useState<Product[] | undefined>([]);
   const [page, setPage] = useState(0);
   const [limit, setLimit] = useState(30);
-  const { data, isLoading, error } = useSearchProductQuery(
+  const { data, isLoading, isFetching, error } = useSearchProductQuery(
     {
       queryModel: searchString,
     },
@@ -39,6 +39,7 @@ const Page = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // @ts-ignore
+    setProduct([]);
     setSearchString(fieldvalue);
     // searchProductAPI({ queryModel: searchString }).then((data) => {
     //   setProduct(data);
@@ -56,7 +57,7 @@ const Page = () => {
               onSubmit={onSubmit}
             />
           </div>
-          {isLoading ? (
+          {isFetching && !product?.length ? (
             <SkeletonGrid />
           ) : product?.length === 0 ? (
             <div className="flex justify-center items-center h-[clac(100vh_-_150px)] w-full">
@@ -69,6 +70,7 @@ const Page = () => {
                 page={page}
                 // @ts-ignore
                 data={data}
+                isFetching={isFetching}
                 setPage={setPage}
                 brandQuerry=""
                 limit={limit}

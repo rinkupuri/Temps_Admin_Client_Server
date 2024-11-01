@@ -54,8 +54,8 @@ app.use(cookieParser());
 
 // Define a rate limit
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minutes
-  max: 30, // Limit each IP to 30 requests per windowMs
+  windowMs: 60 * 1000, // 10 second
+  max: 150, // Limit each IP to 30 requests per windowMs
   message: {
     success: false,
     message: "Too many requests from this IP, please try again later.",

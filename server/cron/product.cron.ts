@@ -17,7 +17,7 @@ export const productImport = async () => {
     }
   });
 
-  cron.schedule("10 */2 * * *", async () => {
+  cron.schedule("0 */2 * * *", async () => {
     runWorkersSequentially()
       .then(() => {
         console.log("All workers have completed.");

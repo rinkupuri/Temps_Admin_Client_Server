@@ -4,6 +4,7 @@ import React, { FC, useEffect, useRef, useCallback } from "react";
 import ProductCard from "./ProductCard";
 import { useGetProductsQuery } from "@/Redux/RTK/product.api";
 import Loading from "./Loading";
+import SkeletonGrid from "./SkeletonGrid";
 
 const ProductGrid: FC<{
   productData: Product[] | undefined;
@@ -13,6 +14,7 @@ const ProductGrid: FC<{
   setPage: (page: number) => void;
   limit: number;
   brandQuerry: string;
+  isFetching: boolean;
   data: { products: Product[]; meta: productMeta } | undefined;
   setProductData: (product: Product[]) => void;
 }> = ({
@@ -20,6 +22,7 @@ const ProductGrid: FC<{
   cart,
   setCart,
   setProductData,
+  isFetching,
   brandQuerry,
   limit,
   page,
@@ -81,6 +84,7 @@ const ProductGrid: FC<{
               <ProductCard product={value} cart={cart} setCart={setCart} />
             </div>
           ))}
+          {isFetching && <Loading />}
         </>
       )}
     </div>

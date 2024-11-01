@@ -25,7 +25,7 @@ export default router;
  *           schema:
  *             type: object
  *             properties:
- *               file:
+ *               csvData:
  *                 type: string
  *                 format: binary
  *                 description: CSV file with Model Numbers
@@ -78,7 +78,7 @@ export default router;
  *           schema:
  *             type: object
  *             properties:
- *               file:
+ *               csvData:
  *                 type: string
  *                 format: binary
  *                 description: CSV file with Model Numbers
