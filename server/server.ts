@@ -23,6 +23,7 @@ import errorHandler from "./Error/ErrorHandler";
 import rateLimit from "express-rate-limit";
 import { AuthenticatedRequest } from "./types/auth.types";
 import { authMiddleware } from "./middlewares/auth.middleware";
+import checkPermission from "./middlewares/checkPermission";
 
 // Middleware to resize and compress images
 app.use("/api/v1/images", express.static(path.resolve("images")));
@@ -88,7 +89,12 @@ app.get("/", (req: Request, res: Response) => {
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 
 // Serve Swagger UI documentation at /api-docs
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use(
+  "/api-docs",
+  checkPermission("admin"),
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocs)
+);
 
 // product Routes used
 
