@@ -22,6 +22,7 @@ import UserRouter from "./routes/user.routes";
 import errorHandler from "./Error/ErrorHandler";
 import rateLimit from "express-rate-limit";
 import { AuthenticatedRequest } from "./types/auth.types";
+import { authMiddleware } from "./middlewares/auth.middleware";
 
 // Middleware to resize and compress images
 app.use("/api/v1/images", express.static(path.resolve("images")));
@@ -52,10 +53,18 @@ app.use(express.json());
 // Use cookie-parser middleware to parse cookies
 app.use(cookieParser());
 
+/**
+ * @route   /api/v1/auth
+ * @desc    Authentication-related routes
+ */
+app.use("/api/v1/auth", auth);
+
+app.use(authMiddleware);
+
 // Define a rate limit
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 10 second
-  max: 150, // Limit each IP to 30 requests per windowMs
+  max: 10, // Limit each IP to 30 requests per windowMs
   message: {
     success: false,
     message: "Too many requests from this IP, please try again later.",
@@ -63,6 +72,7 @@ const limiter = rateLimit({
   standardHeaders: true, // Send rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   keyGenerator: (req: AuthenticatedRequest) => {
+    console.log(req.user.id);
     return req.user ? req.user.id : req.ip; // Use user ID if available, otherwise fallback to IP
   },
 });
@@ -106,11 +116,6 @@ app.use("/api/v1/inventry", inventry);
  */
 app.use("/api/v1/sheet", exportSheet);
 
-/**
- * @route   /api/v1/auth
- * @desc    Authentication-related routes
- */
-app.use("/api/v1/auth", auth);
 
 /**
  * @route   /api/v1/webData
