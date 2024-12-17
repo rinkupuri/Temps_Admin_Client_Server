@@ -39,7 +39,7 @@ const Page = () => {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // @ts-ignore
-    setProduct([]);
+    searchString !== fieldvalue && setProduct([]);
     setSearchString(fieldvalue);
     // searchProductAPI({ queryModel: searchString }).then((data) => {
     //   setProduct(data);
