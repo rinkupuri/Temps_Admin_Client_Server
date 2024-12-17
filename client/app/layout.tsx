@@ -4,7 +4,7 @@ import "@/app/globals.css";
 import { Bounce, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StateProvider from "@/providers/StateProvider";
-import AuthProvider from "@/providers/AuthChecker";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +22,7 @@ export default async function RootLayout({
     <html lang="en">
       <body className={`${inter.className} dark overflow-hidden h-screen`}>
         <StateProvider>{children} </StateProvider>
+        <SpeedInsights />
         <ToastContainer
           position="top-right"
           autoClose={5000}
