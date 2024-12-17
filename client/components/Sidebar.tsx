@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 import { getMenus } from "@/Api/api";
 import { useGetMenusQuery } from "@/Redux/RTK/api";
@@ -8,7 +9,7 @@ const Page = () => {
   return (
     <>
       {!isLoading && (
-        <div className=" fixed md:absolute md:w-full md:top-0 bottom-0 h-[70px] left-0 flex md:flex-col bg-black justify-between md:justify-start overflow-x-scroll md:overflow-hidden w-full md:pt-4 gap-2 items-center md:h-screen  ">
+        <div className=" fixed md:absolute md:w-full md:top-0 bottom-0 h-[70px] left-0 flex md:flex-col bg-black justify-start p-[11px] md:justify-start overflow-x-scroll md:overflow-hidden w-full md:pt-4 gap-2 items-center md:h-screen  ">
           {menus?.map((value, index) => (
             <Link
               key={index}

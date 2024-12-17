@@ -18,7 +18,6 @@ const Navbar = () => {
           <BiBell title="Notification" size={18} />
           <Import />
           <BiExport title="Export" size={18} />
-          {!isLoading && data?.role === "ADMIN" && <BulkInventryUpdate />}
           <Link title="Cart" href={"/cart"}>
             <BiCart size={18} />
           </Link>
