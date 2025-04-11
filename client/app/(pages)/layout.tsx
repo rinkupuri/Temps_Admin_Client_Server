@@ -21,19 +21,39 @@ export default async function RootLayout({
 }>) {
   return (
     <ProtectedRoute>
-      <section className={`${inter.className} dark overflow-hidden h-screen`}>
-        <div className="flex flex-col h-full w-full ">
-          <Navbar />
-          <div className="flex w-full h-full gap-4">
-            <div className="flex-[1] flex justify-center items-center  z-[99] bg-black border-b-white border-[0.5px] md:relative md:h-full fixed bottom-0 left-0 w-full h-[70px] md:block">
-              <Sidebar />
-            </div>
+      <div className="min-h-[calc(100vh-4.2rem)] bg-zinc-900">
+        {/* Main Layout Container */}
+        <div className="relative flex mt-[4.2rem] min-h-[calc(100vh-4.2rem)] w-full overflow-hidden">
+          {/* Sidebar - Desktop */}
+          <div className="hidden md:flex md:w-64 md:flex-col">
+            <Sidebar />
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex flex-1 flex-col">
+            {/* Navbar */}
+            <Navbar />
+
+            {/* Content Wrapper */}
             <CartProvidersComp>
-              <div className="flex-[5] overflow-y-scroll">{children}</div>
+              <main className="flex-1 pb-8">
+                {/* Content Container */}
+                <div className="px-4 sm:px-6 lg:px-8 py-4 max-w-9xl mx-auto">
+                  {/* Scrollable Area */}
+                  <div className="h-[calc(100vh-5rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-800">
+                    {children}
+                  </div>
+                </div>
+              </main>
             </CartProvidersComp>
           </div>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-zinc-900/80 backdrop-blur-lg border-t border-zinc-800/30">
+            <Sidebar />
+          </div>
         </div>
-      </section>
+      </div>
     </ProtectedRoute>
   );
 }

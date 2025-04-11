@@ -1,10 +1,13 @@
 "use client";
-import productData from "@/productData.json";
-import ProductCard from "@/components/ProductCard";
+
 import { FC, lazy, Suspense, useContext, useEffect, useState } from "react";
-import { FcNext, FcPrevious } from "react-icons/fc";
-import ExportButton from "@/components/ExportButton";
+import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Filter, RefreshCw } from "lucide-react";
+import { Product, productMeta } from "@/types/ProductCardTypes";
 import { CartContext } from "@/context/CartContext";
+import { useGetProductsQuery } from "@/Redux/RTK/product.api";
 import {
   Select,
   SelectContent,
@@ -14,22 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
-import axios from "axios";
-import { Product, productMeta } from "@/types/ProductCardTypes";
-import { getProductsAPI } from "@/Api/product.api";
+import ExportButton from "@/components/ExportButton";
 import SkeletonGrid from "./SkeletonGrid";
-import { useGetProductsQuery } from "@/Redux/RTK/product.api";
-import Loading from "./Loading";
+
 const ProductGrid = lazy(() => import("@/components/productGrid"));
 
 const Page: FC<{ title: string }> = ({ title }) => {
-  const qurry = useSearchParams();
+  const query = useSearchParams();
   const pathName = usePathname();
   const router = useRouter();
   const [page, setPage] = useState<number>(1);
@@ -38,12 +32,14 @@ const Page: FC<{ title: string }> = ({ title }) => {
   const [limit, setLimit] = useState<number>(30);
   const [brand, setBrand] = useState<Array<{ brand: string }>>([]);
   const [productData, setProductData] = useState<Product[]>();
-  const [brandQuerry, setBrandQuerry] = useState(qurry.get("brand") || "all");
+  const [brandQuery, setBrandQuery] = useState(query.get("brand") || "all");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   const { data, isLoading, isFetching, error } = useGetProductsQuery(
     {
       page,
       limit,
-      brandQuerry,
+      brandQuery,
     },
     {
       refetchOnMountOrArgChange: true,
@@ -52,21 +48,13 @@ const Page: FC<{ title: string }> = ({ title }) => {
 
   useEffect(() => {
     setProductData([]);
-    setBrandQuerry(qurry.get("brand") || "all");
+    setBrandQuery(query.get("brand") || "all");
     setPage(1);
-  }, [qurry]);
+  }, [query]);
 
   useEffect(() => {
-    // setLoading(true);
-    // getProductsAPI({ page, limit, brandQuerry }).then((data) => {
-    // setProductData((prev) => {
-    //   return [...(prev || []), ...(data?.products || [])];
-    // });
     setProductMeta(data?.meta);
-    // setLoading(false);
-    // });
-    console.log(isLoading);
-  }, [page, limit, brandQuerry, pathName, data, isLoading]);
+  }, [page, limit, brandQuery, pathName, data]);
 
   useEffect(() => {
     axios
@@ -79,33 +67,58 @@ const Page: FC<{ title: string }> = ({ title }) => {
   }, []);
 
   return (
-    <>
-      <div className="flex mt-5 flex-col h-[calc(100vh_-_150px)] md:h-[calc(100vh_-_100px)] items-center w-full">
-        <div className="flex flex-col h-full w-11/12">
-          <div className="flex w-full justify-between items-center">
-            <h1>{title}</h1>
+    <div className="min-h-[calc(100vh-5rem)] bg-zinc-900/50 rounded-lg backdrop-blur-sm border border-zinc-800/30">
+      {/* Header Section */}
+      <div className="p-6 border-b border-zinc-800/30">
+        <div className="flex items-center justify-between">
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent"
+          >
+            {title}
+          </motion.h1>
+          <div className="flex items-center gap-4">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 transition-colors"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+            >
+              <Filter className="w-5 h-5 text-zinc-400" />
+            </motion.button>
             <ExportButton />
           </div>
-          {/* filter menus */}
-          <div className="flex py-1  sticky justify-between items-center top-2 z-50 w-full rounded-md my-1 bg-zinc-800 h-[50px]">
-            <div className="flex px-5 gap-4 justify-center items-center">
-              <div className="flex">Filters : </div>
-              <div className="flex-[1]">
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <AnimatePresence>
+        {isFilterOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="border-b border-zinc-800/30"
+          >
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-zinc-400">Brand:</span>
                 <Select
-                  value={brandQuerry ? brandQuerry.replace(/\_/g, " ") : "all"}
+                  value={brandQuery.replace(/\_/g, " ")}
                   onValueChange={(e: string) => {
-                    const searchParam = new URLSearchParams(qurry.toString());
+                    const searchParam = new URLSearchParams(query.toString());
                     searchParam.set("brand", e.replace(/\s/g, "_"));
                     router.replace(`${pathName}?${searchParam}`);
                   }}
                 >
-                  <SelectTrigger className="bg-black border-[0.1px] border-white/30">
-                    <SelectValue placeholder="Brads" />
+                  <SelectTrigger className="w-[200px] bg-zinc-800/50 border-zinc-700">
+                    <SelectValue placeholder="Select brand" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectGroup>
-                      <SelectLabel>Locations</SelectLabel>
-                      <SelectItem value={"all"}>All</SelectItem>
+                      <SelectLabel>Brands</SelectLabel>
+                      <SelectItem value="all">All Brands</SelectItem>
                       {brand.map((value, index) => (
                         <SelectItem key={index} value={value.brand}>
                           {value.brand}
@@ -116,12 +129,18 @@ const Page: FC<{ title: string }> = ({ title }) => {
                 </Select>
               </div>
             </div>
-          </div>
-          {isFetching && !productData?.length ? (
-            <SkeletonGrid />
-          ) : (
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Content Section */}
+      <div className="p-6">
+        {isFetching && !productData?.length ? (
+          <SkeletonGrid />
+        ) : (
+          <Suspense fallback={<SkeletonGrid />}>
             <ProductGrid
-              brandQuerry={brandQuerry}
+              brandQuerry={brandQuery}
               limit={limit}
               page={page}
               isFetching={isFetching}
@@ -132,10 +151,53 @@ const Page: FC<{ title: string }> = ({ title }) => {
               productData={productData}
               setProductData={setProductData}
             />
-          )}
-        </div>
+          </Suspense>
+        )}
+
+        {/* Loading Indicator */}
+        {/* @ts-ignore  */}
+        {isFetching && productData?.length > 0 && (
+          <div className="flex justify-center mt-4">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="p-2 rounded-full bg-zinc-800/50"
+            >
+              <RefreshCw className="w-5 h-5 text-zinc-400" />
+            </motion.div>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {productMeta && (
+          <div className="mt-6 flex items-center justify-between">
+            <span className="text-sm text-zinc-400">
+              Showing {(page - 1) * limit + 1} to{" "}
+              {Math.min(page * limit, productMeta.totalCount)} of {productMeta.totalCount} results
+            </span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 text-zinc-400" />
+              </button>
+              <span className="text-sm text-zinc-400">
+                Page {page} of {Math.ceil(productMeta.totalPages / limit)}
+              </span>
+              <button
+                onClick={() => setPage(p => p + 1)}
+                disabled={page * limit >= productMeta.totalPages}
+                className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight className="w-5 h-5 text-zinc-400" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
