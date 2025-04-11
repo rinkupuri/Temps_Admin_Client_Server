@@ -1,33 +1,78 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
-import { getMenus } from "@/Api/api";
+/* eslint-disable @next/next/no-img-element */
+import React from "react";
 import { useGetMenusQuery } from "@/Redux/RTK/api";
 import Link from "next/link";
 
-const Page = () => {
-  const { data: menus, isLoading, error } = useGetMenusQuery({});
+const Sidebar = () => {
+  const { data: menus, isLoading } = useGetMenusQuery({});
+
+  if (isLoading) {
+    return (
+      <div className="fixed md:absolute w-full md:w-64 bottom-0 md:bottom-auto md:top-0 left-0 h-[70px] md:h-screen bg-zinc-950 border-r border-zinc-800/30 animate-pulse" />
+    );
+  }
+
   return (
-    <>
-      {!isLoading && (
-        <div className=" fixed md:absolute md:w-full md:top-0 bottom-0 h-[70px] left-0 flex md:flex-col bg-black justify-start p-[11px] md:justify-start overflow-x-scroll md:overflow-hidden w-full md:pt-4 gap-2 items-center md:h-screen  ">
-          {menus?.map((value, index) => (
+    <nav className="fixed md:absolute w-full md:w-64 bottom-0 md:bottom-auto md:top-0 left-0 h-[70px] md:h-screen bg-zinc-950 border-r border-zinc-800/30 backdrop-blur-lg z-50">
+      {/* Mobile Horizontal Scroll */}
+      <div className="flex md:hidden h-full overflow-x-auto overflow-y-hidden px-4 gap-2 items-center scrollbar-hide">
+        {menus?.map((item, index) => (
+          <Link
+            key={index}
+            href={item.link}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-zinc-900/50 hover:bg-zinc-800/50 transition-colors group whitespace-nowrap"
+          >
+            <div className="w-5 h-5 flex items-center justify-center rounded-md overflow-hidden bg-zinc-800/50 group-hover:bg-zinc-700/50 transition-colors">
+              <img
+                src={item.image}
+                alt=""
+                className="w-4 h-4 object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <span className="text-sm font-medium text-zinc-300 group-hover:text-white transition-colors">
+              {item.name}
+            </span>
+          </Link>
+        ))}
+      </div>
+
+      {/* Desktop Vertical Layout */}
+      <div className="hidden md:flex flex-col h-full">
+        {/* Brand/Logo Area */}
+        <div className="h-16 flex items-center px-6 border-b border-zinc-800/30">
+          <h1 className="text-lg font-semibold text-white">Dashboard</h1>
+        </div>
+
+        {/* Menu Items */}
+        <div className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+          {menus?.map((item, index) => (
             <Link
               key={index}
-              className="flex md:w-10/12  h-full bg-zinc-900 md:h-[40px] justify-center md:justify-start text-[14px] items-center cursor-pointer hover:bg-zinc-800 text-white py-2 px-4 rounded-md gap-1"
-              href={value.link}
+              href={item.link}
+              className="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-zinc-800/50 transition-all duration-200 group"
             >
-              <span className="h-[20px] w-[20px] flex justify-center items-center !text-[20px]">
-                <img className="w-[20px] h-[20px]" src={value.image} alt="" />
-              </span>
-              <span className="h-full text-center p-2  flex justify-center items-center">
-                {value.name}
+              <div className="w-6 h-6 flex items-center justify-center rounded-md overflow-hidden bg-zinc-800/50 group-hover:bg-zinc-700/50 transition-colors">
+                <img
+                  src={item.image}
+                  alt=""
+                  className="w-5 h-5 object-contain opacity-70 group-hover:opacity-100 transition-opacity"
+                />
+              </div>
+              <span className="text-sm font-medium text-zinc-400 group-hover:text-white transition-colors">
+                {item.name}
               </span>
             </Link>
           ))}
         </div>
-      )}
-    </>
+
+        {/* Footer Area - Optional */}
+        <div className="h-16 flex items-center px-6 border-t border-zinc-800/30">
+          <span className="text-xs text-zinc-500">© 2025 Dashboard</span>
+        </div>
+      </div>
+    </nav>
   );
 };
 
-export default Page;
+export default Sidebar;

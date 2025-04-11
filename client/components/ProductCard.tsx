@@ -1,4 +1,3 @@
-"use client";
 import React, { FC, useEffect, useState } from "react";
 import { cart, Product } from "@/types/ProductCardTypes";
 import { usePathname } from "next/navigation";
@@ -12,7 +11,6 @@ const ProductCard: FC<{
   setCart: (cart: any) => void;
 }> = ({ product, cart, setCart, cartData }) => {
   const path = usePathname();
-
   const [quantity, setQuantity] = useState(cartData?.quantity || 0);
 
   useEffect(() => {
@@ -40,108 +38,131 @@ const ProductCard: FC<{
   ];
 
   const renderStockIndicators = () => (
-    <div className="grid grid-cols-4 py-2 md:p-2 place-content-center my-1 gap-1 flex-wrap justify-evenly items-center">
+    <div className="grid grid-cols-4 gap-1.5 px-3 py-2">
       {stockTypes.map(({ label, key }) => (
-        <span
+        <div
           key={key}
-          className={`xl:flex-row text-center flex-col text-[10px] md:text-[12px] p-[2px] border-white/50 border-[0.1px]  xl:rounded-full xl:py-[2px] ${
+          className={`flex items-center justify-center px-1.5 py-1 rounded-md text-[10px] font-medium transition-colors ${
             // @ts-ignore
-            product.stockId[key] ? "bg-green-600" : "bg-zinc-800"
+            product.stockId[key]
+              ? "bg-indigo-500/20 text-indigo-300"
+              : "bg-zinc-800 text-zinc-500"
           }`}
         >
-          <span>{label}:</span>{" "}
-          <span>
+          <span>{label}</span>
+          <span className="ml-1">
             {
               // @ts-ignore
               product.stockId[key] || 0
             }
           </span>
-        </span>
+        </div>
       ))}
     </div>
   );
 
   return (
-    <div className="relative overflow-hidden border-[0.3px] border-zinc-700 my-1 rounded-md flex flex-col">
-      <img
-        className="object-contain rounded-t-md w-full h-auto"
-        src={
-          product.image
-            ? process.env.NEXT_PUBLIC_SERVER_URL + product.image
-            : noPic.src
-        }
-        alt=""
-      />
-      <div
-        className={`absolute px-1 ${
-          product.consumerOffer ? "" : "hidden"
-        } top-0 text-sm text-center right-0 w-16 h-6 text-white bg-zinc-900 rounded-bl-lg`}
-      >
-        {product.consumerOffer + "% Off"}
-      </div>
-      <div className="flex p-2 justify-between items-center w-full">
-        <span className="text-[12px]">{product.modelName}</span>
-        <span className="text-[12px]">{product.brand}</span>
+    <div className="group bg-gradient-to-b from-zinc-900 to-zinc-950 rounded-lg border border-zinc-800/50 hover:border-indigo-500/30 transition-all duration-300 shadow-lg hover:shadow-indigo-500/10">
+      {/* Image and Offer Badge */}
+      <div className="relative h-48 overflow-hidden rounded-t-lg bg-zinc-800">
+        <img
+          className="w-full h-full object-contain transform transition-transform duration-300 group-hover:scale-105"
+          src={
+            product.image
+              ? process.env.NEXT_PUBLIC_SERVER_URL + product.image
+              : noPic.src
+          }
+          alt={product.modelName}
+        />
+        {product.consumerOffer && (
+          <div className="absolute top-2 right-2">
+            <div className="bg-indigo-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+              {product.consumerOffer}% OFF
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Stock Section */}
-      <div className="flex flex-col w-full">
-        <div className="flex my-1 justify-evenly items-center">
-          <span className="text-[12px] flex w-full justify-center items-center">
-            Stock: {product.totalStock || 0}
-          </span>
-          <span className="text-[12px] flex w-full justify-center items-center">
-            MRP: {product.mrp}
+      {/* Content */}
+      <div className="p-3">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-2">
+          <h3 className="text-sm font-medium text-white truncate max-w-[70%]">
+            {product.modelName}
+          </h3>
+          <span className="text-xs text-indigo-400 font-medium">
+            {product.brand}
           </span>
         </div>
-        {renderStockIndicators()}
-      </div>
 
-      {/* Cart for Model Town and GT Road Button */}
-      <div
-        className={` ${
-          path === "/order" || path === "/cart" ? "flex" : "hidden"
-        } flex p-2 justify-evenly items-center`}
-      >
-        {["QTY", "IB", "DDN"].map((location, index) => {
-          const stockKey =
-            location === "DL"
-              ? "dlStock"
-              : location === "IB"
-              ? "ibStock"
-              : "ddnStock";
-          return (
-            <div
-              key={index}
-              className="flex gap-1 text-[12px] text-center flex-col"
-            >
-              {location}
-              <div className="flex">
-                <button
-                  onClick={() => handleQuantityChange(stockKey, false)}
-                  className={`${
-                    quantity > 0 ? "cursor-pointer" : "cursor-not-allowed"
-                  } p-1 bg-zinc-800 border-[1px] border-white/20`}
-                  disabled={quantity <= 0}
-                >
-                  -
-                </button>
-                <input
-                  value={quantity}
-                  readOnly
-                  className="w-8 flex justify-center text-center items-center text-[12px] h-8 p-1 bg-zinc-800"
-                  type="number"
-                />
-                <button
-                  onClick={() => handleQuantityChange(stockKey, true)}
-                  className="p-1 bg-zinc-800 border-[1px] border-white/20"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-          );
-        })}
+        {/* Stats */}
+        <div className="flex justify-between items-center py-2 border-y border-zinc-800/50 mb-2">
+          <div className="text-center flex-1">
+            <span className="block text-[10px] text-zinc-500 uppercase tracking-wide">
+              Stock
+            </span>
+            <span className="text-sm font-medium text-white">
+              {product.totalStock || 0}
+            </span>
+          </div>
+          <div className="text-center flex-1 border-l border-zinc-800/50">
+            <span className="block text-[10px] text-zinc-500 uppercase tracking-wide">
+              MRP
+            </span>
+            <span className="text-sm font-medium text-white">
+              ₹{product.mrp}
+            </span>
+          </div>
+        </div>
+
+        {/* Stock Indicators */}
+        {renderStockIndicators()}
+
+        {/* Cart Controls */}
+        {(path === "/order" || path === "/cart") && (
+          <div className="flex justify-between items-center gap-2 mt-3 pt-3 border-t border-zinc-800/50">
+            {["QTY", "IB", "DDN"].map((location, index) => {
+              const stockKey =
+                location === "DL"
+                  ? "dlStock"
+                  : location === "IB"
+                  ? "ibStock"
+                  : "ddnStock";
+              return (
+                <div key={index} className="flex-1">
+                  <span className="block text-center text-[10px] text-zinc-400 mb-1.5">
+                    {location}
+                  </span>
+                  <div className="flex items-center bg-zinc-800/50 rounded-md">
+                    <button
+                      onClick={() => handleQuantityChange(stockKey, false)}
+                      className={`px-2 py-1 ${
+                        quantity > 0
+                          ? "text-white hover:bg-indigo-500/20"
+                          : "text-zinc-600 cursor-not-allowed"
+                      } transition-colors rounded-l-md`}
+                      disabled={quantity <= 0}
+                    >
+                      -
+                    </button>
+                    <input
+                      value={quantity}
+                      readOnly
+                      className="w-8 text-center bg-transparent text-white text-xs py-1"
+                      type="number"
+                    />
+                    <button
+                      onClick={() => handleQuantityChange(stockKey, true)}
+                      className="px-2 py-1 text-white hover:bg-indigo-500/20 transition-colors rounded-r-md"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
