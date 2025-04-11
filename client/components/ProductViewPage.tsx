@@ -1,7 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { FC, lazy, Suspense, useContext, useEffect, useState } from "react";
-import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import axios from "axios";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Filter, RefreshCw } from "lucide-react";
@@ -49,6 +55,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   useEffect(() => {
     setProductData([]);
     setBrandQuery(query.get("brand") || "all");
+    console.log("Brand Query:", query.get("brand"));
     setPage(1);
   }, [query]);
 
@@ -71,7 +78,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
       {/* Header Section */}
       <div className="p-6 border-b border-zinc-800/30">
         <div className="flex items-center justify-between">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-2xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent"
@@ -103,7 +110,9 @@ const Page: FC<{ title: string }> = ({ title }) => {
           >
             <div className="p-6 space-y-4">
               <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-zinc-400">Brand:</span>
+                <span className="text-sm font-medium text-zinc-400">
+                  Brand:
+                </span>
                 <Select
                   value={brandQuery.replace(/\_/g, " ")}
                   onValueChange={(e: string) => {
@@ -173,11 +182,12 @@ const Page: FC<{ title: string }> = ({ title }) => {
           <div className="mt-6 flex items-center justify-between">
             <span className="text-sm text-zinc-400">
               Showing {(page - 1) * limit + 1} to{" "}
-              {Math.min(page * limit, productMeta.totalCount)} of {productMeta.totalCount} results
+              {Math.min(page * limit, productMeta.totalCount)} of{" "}
+              {productMeta.totalCount} results
             </span>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setPage(p => Math.max(1, p - 1))}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
@@ -187,7 +197,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
                 Page {page} of {Math.ceil(productMeta.totalPages / limit)}
               </span>
               <button
-                onClick={() => setPage(p => p + 1)}
+                onClick={() => setPage((p) => p + 1)}
                 disabled={page * limit >= productMeta.totalPages}
                 className="p-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-700/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >

@@ -24,10 +24,10 @@ export const extendedApi = apiSlice.injectEndpoints({
 
     // Inject `getProducts` endpoint
     getProducts: builder.query({
-      query: ({ brandQuerry, page, limit }) => ({
+      query: ({ brandQuery, page, limit }) => ({
         url: `/product/get`,
         method: "GET",
-        params: { brand: brandQuerry, page, limit },
+        params: { brand: brandQuery, page, limit },
         credentials: "include", // Ensure cookies are included
       }),
       transformResponse: (response: {
