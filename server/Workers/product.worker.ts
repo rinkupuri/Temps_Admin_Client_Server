@@ -35,7 +35,7 @@ const processCSV = async (csvFilePath: string) => {
 
       // Process each entry in the current batch
       const processPromises = batch.map(async (value, index) => {
-        const { modelName, image, mrp, brand } = value;
+        const { modelName, image, mrp, brand, discount } = value;
 
         // Validate required fields
         if (!modelName || !mrp || !brand || isNaN(parseFloat(mrp))) {
@@ -80,16 +80,32 @@ const processCSV = async (csvFilePath: string) => {
 
           if (existingProduct) {
             // Update image if product exists but image is not set
-            if (!existingProduct.image) {
-              await prismaClient.product.update({
-                where: { modelName },
-                data: { image: imageName ? `/images/${imageName}` : "" },
-              });
-              successfullyCreated += 1;
-              console.log(`Updated ${modelName}`);
-            } else {
-              alreadyExist += 1;
-              console.log(`${modelName} already exists`);
+            console.log(parseInt(discount), discount);
+            try {
+              if (!existingProduct.image) {
+                await prismaClient.product.update({
+                  where: { modelName },
+                  data: {
+                    image: imageName ? `/images/${imageName}` : "",
+                    mrp: parseFloat(mrp),
+                    consumerOffer: parseInt(discount) ? parseInt(discount) : 0,
+                  },
+                });
+                successfullyCreated += 1;
+                console.log(`Updated ${modelName}`);
+              } else {
+                await prismaClient.product.update({
+                  where: { modelName },
+                  data: {
+                    mrp: parseFloat(mrp),
+                    consumerOffer: parseInt(discount) ? parseInt(discount) : 0,
+                  },
+                });
+                successfullyCreated += 1;
+                console.log(`Updated ${modelName}`);
+              }
+            } catch (error) {
+              console.error(`Error updating ${modelName}:`, error.message);
             }
             return;
           }
@@ -101,6 +117,7 @@ const processCSV = async (csvFilePath: string) => {
               modelName,
               mrp: parseFloat(mrp),
               image: imageName ? `/images/${imageName}` : "",
+              consumerOffer: parseInt(discount) ? parseInt(discount) : 0,
               stockId: {
                 create: {
                   ddnStock: 0,

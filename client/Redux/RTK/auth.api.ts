@@ -52,11 +52,10 @@ export const extendedApi = apiSlice.injectEndpoints({
         }
       },
     }),
-
     // Adding the createUser mutation for registration
     createUser: builder.mutation({
       query: ({ firstname, lastname, email, password, confirmPassword }) => ({
-        url: "/user/create",
+        url: "/auth/register",
         method: "POST",
         body: { firstname, lastname, email, password, confirmPassword },
         headers: {

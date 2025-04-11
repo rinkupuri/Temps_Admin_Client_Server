@@ -10,17 +10,17 @@ import { loginSchema, registerSchema } from "../Validators/auth.validators";
 
 // Register User Function
 export const register = AsyncWrapper(async (req: Request, res: Response) => {
-  let { firstName, lastName, email, password } = req.body;
+  let { firstname, lastname, email, password } = req.body;
 
   // Validate input fields, return error if any field is missing
-  if (!firstName && !lastName && !email && !password) {
+  if (!firstname && !lastname && !email && !password) {
     return res.status(403).json({ success: false, message: "Invalid data" });
   }
 
   // Validate incoming request data
   const { error } = registerSchema.validate({
-    firstName,
-    lastName,
+    firstname,
+    lastname,
     email,
     password,
   });
@@ -45,7 +45,7 @@ export const register = AsyncWrapper(async (req: Request, res: Response) => {
   // Create new user in the database with hashed password
   const user = await prisma.user.create({
     data: {
-      name: `${firstName} ${lastName}`, // Combine firstName and lastName into a full name
+      name: `${firstname} ${lastname}`, // Combine firstName and lastName into a full name
       email,
       password,
     },
@@ -112,6 +112,12 @@ export const login = AsyncWrapper(async (req: Request, res: Response) => {
   // Generate a JWT token for the authenticated user
   const token = sendToken(user);
 
+  if (user.status !== "ACTIVE") {
+    return res
+      .status(403)
+      .json({ success: false, message: "User is not active" });
+  }
+
   // Set the token in a cookie (for session management)
   setCookie(res, "token", token);
   // Respond with success and return user data (without the password)
@@ -151,4 +157,3 @@ export const getUser = AsyncWrapper(
     res.status(200).json({ success: true, user: foundUser });
   }
 );
-

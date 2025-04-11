@@ -20,7 +20,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} dark overflow-hidden h-screen`}>
+      <body className={`${inter.className} dark overflow-y-scroll h-screen`}>
         <StateProvider>{children} </StateProvider>
         <SpeedInsights />
         <ToastContainer

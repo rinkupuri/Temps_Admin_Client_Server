@@ -48,7 +48,7 @@ router.get("/getall", authMiddleware, checkPermission("admin"), getAllUsers);
  *       201:
  *         description: User created successfully
  */
-router.post("/create", authMiddleware, checkPermission("admin"), createUser);
+router.post("/create", createUser);
 
 /**
  * @swagger

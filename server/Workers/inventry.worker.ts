@@ -76,29 +76,30 @@ const processCSV = async (csvFilePath: string) => {
       where: { totalStock: { gt: 0 } },
     });
 
-    const zeroStockPromises = leftProducts.map(async (product) => {
-      if (noInventoryArray.includes(product.modelName)) {
-        await prismaClient.product.update({
-          where: { id: product.id },
-          data: { totalStock: 0 },
-        });
-        await prismaClient.stock.update({
-          where: { productId: product.id },
-          data: {
-            ddnStock: 0,
-            dlStock: 0,
-            godwanStock: 0,
-            chdStock: 0,
-            ibStock: 0,
-            mainStock: 0,
-            mtStock: 0,
-            smapleLine: 0,
-          },
-        });
-      }
-    });
+    const productIdsToUpdate = leftProducts
+      .filter((product) => noInventoryArray.includes(product.modelName))
+      .map((product) => product.id);
 
-    await Promise.all(zeroStockPromises);
+    if (productIdsToUpdate.length > 0) {
+      await prismaClient.product.updateMany({
+        where: { id: { in: productIdsToUpdate } },
+        data: { totalStock: 0 },
+      });
+
+      await prismaClient.stock.updateMany({
+        where: { productId: { in: productIdsToUpdate } },
+        data: {
+          ddnStock: 0,
+          dlStock: 0,
+          godwanStock: 0,
+          chdStock: 0,
+          ibStock: 0,
+          mainStock: 0,
+          mtStock: 0,
+          smapleLine: 0,
+        },
+      });
+    }
 
     // Delete the CSV file after processing
     try {

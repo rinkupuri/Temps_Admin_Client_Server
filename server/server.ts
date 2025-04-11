@@ -9,6 +9,7 @@ import cartRoute from "./routes/cart.routes";
 import http from "http";
 import inventry from "./routes/inventry.routes";
 import exportSheet from "./routes/export.routes";
+import extraData from "./routes/extradata.routes";
 import path from "path";
 import { productImport } from "./cron/product.cron";
 import { inventryCorn } from "./cron/inventry.cron";
@@ -122,7 +123,6 @@ app.use("/api/v1/inventry", inventry);
  */
 app.use("/api/v1/sheet", exportSheet);
 
-
 /**
  * @route   /api/v1/webData
  * @desc    Web data-related routes
@@ -133,6 +133,8 @@ app.use("/api/v1/webData", webData);
  * @desc    User Related routes
  */
 app.use("/api/v1/user", UserRouter);
+
+app.use("/api/v1/extradata", extraData);
 
 app.use("*", (req: Request, res: Response) => {
   res.status(404).json({ message: "Not Found" });

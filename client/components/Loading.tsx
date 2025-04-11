@@ -1,10 +1,23 @@
 import React from "react";
+import { Loader2 } from "lucide-react";
 
 const Loading = () => {
   return (
-    <div className="fixed z-[99999999999] top-0 bg-black/10 left-0 w-full h-full flex justify-center items-center">
-      <div className="flex bg-zinc-900 overflow-hidden border-white/60 border-[0.04px] rounded-sm justify-center items-center w-20 h-20">
-        <div className="animate-spin z-10 rounded-full h-10 w-10 border-4 border-dotted border-white"></div>
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center">
+      <div className="relative bg-zinc-900 rounded-lg p-8 shadow-2xl border border-zinc-800/50">
+        {/* Primary spinner */}
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-zinc-700 border-t-indigo-500"></div>
+
+        {/* Centered icon */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Loader2
+            className="w-8 h-8 text-indigo-500 animate-pulse"
+            strokeWidth={1.5}
+          />
+        </div>
+
+        {/* Outer glow effect */}
+        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 blur-xl rounded-lg"></div>
       </div>
     </div>
   );

@@ -29,6 +29,7 @@ export const authMiddleware = AsyncWrapper(
           id: true,
           email: true,
           name: true,
+          status: true,
           role: true,
           Permission: true,
         }, // Select necessary fields
@@ -37,6 +38,10 @@ export const authMiddleware = AsyncWrapper(
       // If the user does not exist or the token is invalid, return a 401 response
       if (!isVerify) {
         return res.status(401).json({ message: "Invalid token" });
+      }
+
+      if (isVerify.status !== "ACTIVE") {
+        return res.status(401).json({ message: "User is not active" });
       }
 
       // Attach the user data to the request object for future middleware or route handlers

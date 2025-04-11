@@ -21,3 +21,17 @@ export interface User {
   Permission?: string[];
   role: "ADMIN" | "SUSER" | "USER";
 }
+
+
+export interface Task {
+  id: string;
+  createdAt: string;
+  taskDesc: string;
+  assignedById: string;
+  assignedToId: string;
+  taskStatus: "PENDING" | "INPROGRESS" | "REVISED" | "COMPLETED";
+  taskPriority: "HIGH" | "MEDIUM" | "LOW";
+  tatDate: string;
+  tatTime: string;
+  taskRemarks?: string;
+}

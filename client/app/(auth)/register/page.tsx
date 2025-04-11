@@ -3,12 +3,23 @@ import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { IconBrandGoogle } from "@tabler/icons-react";
-import { useCreateUserMutation } from "@/Redux/RTK/auth.api";
 import { toast } from "react-toastify";
+import {
+  LucideUser,
+  LucideMail,
+  LucideLock,
+  LucideEye,
+  LucideEyeOff,
+} from "lucide-react";
+import Link from "next/link";
+import { useCreateUserMutation } from "@/Redux/RTK/auth.api";
+import { useRouter } from "next/navigation";
 
-export default function SignupFormDemo() {
+export default function SignupForm() {
+  const router = useRouter();
   const [createUser, { data, error, isLoading }] = useCreateUserMutation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -24,185 +35,274 @@ export default function SignupFormDemo() {
       ...formData,
       [name]: value,
     });
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors({
+        ...errors,
+        [name]: "",
+      });
+    }
   };
 
   useEffect(() => {
     if (data) {
+      toast.success("Account created successfully!");
     }
     if (error) {
-      toast.error("Failed to create user");
+      toast.error("Failed to create account");
     }
-  }, [data, error, isLoading]);
+  }, [data, error]);
 
   const validate = () => {
     let newErrors: any = {};
-    if (!formData.firstname) newErrors.firstname = "First name is required.";
-    if (!formData.lastname) newErrors.lastname = "Last name is required.";
+    if (!formData.firstname) newErrors.firstname = "First name is required";
+    if (!formData.lastname) newErrors.lastname = "Last name is required";
     if (!formData.email) {
-      newErrors.email = "Email is required.";
+      newErrors.email = "Email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email address is invalid.";
+      newErrors.email = "Email address is invalid";
     }
-    if (!formData.password) newErrors.password = "Password is required.";
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match.";
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
     }
     return newErrors;
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // Submit form if no errors
-      (async () => {
-        try {
-          toast.promise(createUser(formData).unwrap(), {
-            pending: "Creating user...",
-            success: "User created successfully",
-            error: "Failed to create user",
-          });
-        } catch (err) {
-          console.error("Failed to create user: ", err);
-        }
-      })();
-      // You can now handle the form submission here (e.g., sending data to an API)
+      try {
+        await toast.promise(createUser(formData).unwrap(), {
+          pending: "Creating your account...",
+          success: "Account created successfully!",
+          error: "Failed to create account",
+        });
+        router.push("/login");
+      } catch (err) {
+        console.error("Failed to create user:", err);
+      }
     }
   };
 
   return (
-    <>
-      <div className="flex w-full  h-screen overflow-y-scroll">
-        <div className="max-w-md my-10 py-10 h-full w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
-          <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-            Welcome to Temps Admin
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+      <div className="max-w-md w-full space-y-8 bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl">
+        <div className="text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
+            Create Account
           </h2>
-          <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-            Request register to get a Login Id Password
+          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            Join us today and get started
           </p>
+        </div>
 
-          <form className="my-8" onSubmit={handleSubmit}>
-            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-              <LabelInputContainer>
-                <Label htmlFor="firstname">First name</Label>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label
+                htmlFor="firstname"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                First Name
+              </Label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <LucideUser className="h-5 w-5 text-gray-400" />
+                </div>
                 <Input
                   id="firstname"
                   name="firstname"
-                  placeholder="Example"
                   type="text"
                   value={formData.firstname}
                   onChange={handleChange}
+                  placeholder="John"
+                  className={cn(
+                    "pl-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700",
+                    errors.firstname ? "border-red-500" : ""
+                  )}
                 />
-                {errors.firstname && (
-                  <p className="text-red-500">{errors.firstname}</p>
-                )}
-              </LabelInputContainer>
-              <LabelInputContainer>
-                <Label htmlFor="lastname">Last name</Label>
+              </div>
+              {errors.firstname && (
+                <p className="mt-1 text-sm text-red-500">{errors.firstname}</p>
+              )}
+            </div>
+
+            <div>
+              <Label
+                htmlFor="lastname"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Last Name
+              </Label>
+              <div className="mt-1 relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <LucideUser className="h-5 w-5 text-gray-400" />
+                </div>
                 <Input
                   id="lastname"
                   name="lastname"
-                  placeholder="User"
                   type="text"
                   value={formData.lastname}
                   onChange={handleChange}
+                  placeholder="Doe"
+                  className={cn(
+                    "pl-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700",
+                    errors.lastname ? "border-red-500" : ""
+                  )}
                 />
-                {errors.lastname && (
-                  <p className="text-red-500">{errors.lastname}</p>
-                )}
-              </LabelInputContainer>
+              </div>
+              {errors.lastname && (
+                <p className="mt-1 text-sm text-red-500">{errors.lastname}</p>
+              )}
             </div>
-            <LabelInputContainer className="mb-4">
-              <Label htmlFor="email">Email Address</Label>
+          </div>
+
+          <div>
+            <Label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Email Address
+            </Label>
+            <div className="mt-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LucideMail className="h-5 w-5 text-gray-400" />
+              </div>
               <Input
                 id="email"
                 name="email"
-                placeholder="sample@example.com"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="you@example.com"
+                className={cn(
+                  "pl-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700",
+                  errors.email ? "border-red-500" : ""
+                )}
               />
-              {errors.email && <p className="text-red-500">{errors.email}</p>}
-            </LabelInputContainer>
-            <LabelInputContainer className="mb-4">
-              <Label htmlFor="password">Password</Label>
+            </div>
+            {errors.email && (
+              <p className="mt-1 text-sm text-red-500">{errors.email}</p>
+            )}
+          </div>
+
+          <div>
+            <Label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Password
+            </Label>
+            <div className="mt-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LucideLock className="h-5 w-5 text-gray-400" />
+              </div>
               <Input
                 id="password"
                 name="password"
-                placeholder="••••••••"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={formData.password}
                 onChange={handleChange}
+                placeholder="••••••••"
+                className={cn(
+                  "pl-10 pr-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700",
+                  errors.password ? "border-red-500" : ""
+                )}
               />
-              {errors.password && (
-                <p className="text-red-500">{errors.password}</p>
-              )}
-            </LabelInputContainer>
-            <LabelInputContainer className="mb-8">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              >
+                {showPassword ? (
+                  <LucideEyeOff className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <LucideEye className="h-5 w-5 text-gray-400" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="mt-1 text-sm text-red-500">{errors.password}</p>
+            )}
+          </div>
+
+          <div>
+            <Label
+              htmlFor="confirmPassword"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+              Confirm Password
+            </Label>
+            <div className="mt-1 relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <LucideLock className="h-5 w-5 text-gray-400" />
+              </div>
               <Input
                 id="confirmPassword"
                 name="confirmPassword"
-                placeholder="••••••••"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                placeholder="••••••••"
+                className={cn(
+                  "pl-10 pr-10 block w-full rounded-lg border-gray-300 dark:border-gray-600 dark:bg-gray-700",
+                  errors.confirmPassword ? "border-red-500" : ""
+                )}
               />
-              {errors.confirmPassword && (
-                <p className="text-red-500">{errors.confirmPassword}</p>
-              )}
-            </LabelInputContainer>
-
-            <button
-              className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-              type="submit"
-            >
-              Sign up &rarr;
-              <BottomGradient />
-            </button>
-
-            <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-
-            <div className="flex flex-col space-y-4">
               <button
-                className=" relative group/btn flex space-x-2 items-center justify-center  px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
                 type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
-                <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-                <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-                  Google
-                </span>
-                <BottomGradient />
+                {showConfirmPassword ? (
+                  <LucideEyeOff className="h-5 w-5 text-gray-400" />
+                ) : (
+                  <LucideEye className="h-5 w-5 text-gray-400" />
+                )}
               </button>
             </div>
-          </form>
-        </div>
+            {errors.confirmPassword && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.confirmPassword}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col space-y-4">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-[1.02]"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                "Create Account"
+              )}
+            </button>
+
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+              Already have an account?{" "}
+              <Link
+                href="/"
+                className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+              >
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </form>
       </div>
-    </>
-  );
-}
-
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-    </>
-  );
-};
-
-const LabelInputContainer = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn("flex flex-col space-y-2 w-full", className)}>
-      {children}
     </div>
   );
-};
+}

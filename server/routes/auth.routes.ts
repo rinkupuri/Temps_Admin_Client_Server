@@ -17,7 +17,7 @@ router.post("/login", login);
  * @desc    User registration
  * @access  Public
  */
-router.post("/register", authMiddleware, checkPermission("admin"), register);
+router.post("/register", register);
 
 /**
  * @route   GET /get
@@ -26,12 +26,7 @@ router.post("/register", authMiddleware, checkPermission("admin"), register);
  */
 router.get("/get", authMiddleware, getUser);
 
-
 export default router;
-
-
-
-
 
 /**
  * @swagger
@@ -246,4 +241,3 @@ export default router;
  *                   type: string
  *                   example: User not found
  */
-

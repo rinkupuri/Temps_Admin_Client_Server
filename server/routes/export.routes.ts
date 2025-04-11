@@ -4,7 +4,7 @@ import checkPermission from "../middlewares/checkPermission";
 import { authMiddleware } from "../middlewares/auth.middleware";
 const router = express.Router();
 
-router.post("/export", authMiddleware, checkPermission("admin"), exportSheet);
+router.post("/export", authMiddleware, checkPermission("sheets"), exportSheet);
 router.post("/create", authMiddleware, checkPermission("admin"), createSheet);
 
 export default router;

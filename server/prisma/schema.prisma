@@ -51,14 +51,22 @@ enum Role {
   SUSER // Super user role with elevated permissions
 }
 
+enum AccountStatus {
+  ACTIVE // Account is active
+  INACTIVE // Account is inactive
+  BLOCKED // Account is blocked
+}
+
 // User model to store user details and credentials
 model User {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
-  name       String // User's name
-  email      String   @unique // Unique email address of the user
-  password   String // User's password for authentication
-  Permission String[] @default(["search"]) // Location of the user, defaults to an empty string
-  role       Role     @default(USER) // Role of the user, defaults to 'USER'
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  name        String // User's name
+  email       String        @unique // Unique email address of the user
+  password    String // User's password for authentication
+  Permission  String[]      @default(["search"]) // Location of the user, defaults to an empty string
+  role        Role          @default(USER) // Role of the user, defaults to 'USER'
+  EmployeTask EmployeTask[]
+  status      AccountStatus @default(INACTIVE) // Account status, defaults to 'ACTIVE'
 }
 
 // webData model to store website-related data
@@ -77,4 +85,37 @@ model Menu {
   desc       String
   permission String // Optional permission required to access this menu item
   webData    webData? // Optional relation back to the webData model
+}
+
+enum TaskStatus {
+  PENDING
+  INPROGRESS
+  REVISED
+  COMPLETED
+}
+
+enum TaskPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model EmployeTask {
+  id           String       @id @default(auto()) @map("_id") @db.ObjectId // Primary key, auto-generated, mapped to MongoDB ObjectId
+  taskDesc     String
+  assignedById String       @db.ObjectId // Foreign key to the User model
+  assignedToId String       @db.ObjectId // Foreign key to the User model
+  AssignedTo   User         @relation(fields: [assignedToId], references: [id]) // Relation to the User model via assignedById
+  tatDate      DateTime
+  taskStatus   TaskStatus   @default(PENDING)
+  taskPriority TaskPriority @default(MEDIUM)
+  taskRemarks  String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model ExtraData {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String @unique
+  value String
 }

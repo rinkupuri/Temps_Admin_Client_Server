@@ -23,13 +23,13 @@ export const loginSchema = Joi.object({
 
 // Register schema (firstName, lastName, email, and password are required)
 export const registerSchema = Joi.object({
-  firstName: Joi.string().min(2).max(30).required().messages({
+  firstname: Joi.string().min(2).max(30).required().messages({
     "string.base": "First name must be a string.",
     "string.empty": "First name is required.",
     "string.min": "First name must have at least 2 characters.",
     "any.required": "First name is required.",
   }),
-  lastName: Joi.string().min(2).max(30).required().messages({
+  lastname: Joi.string().min(2).max(30).required().messages({
     "string.base": "Last name must be a string.",
     "string.empty": "Last name is required.",
     "string.min": "Last name must have at least 2 characters.",
