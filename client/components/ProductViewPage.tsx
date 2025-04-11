@@ -76,7 +76,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-zinc-900/50 rounded-lg backdrop-blur-sm border border-zinc-800/30">
       {/* Header Section */}
-      <div className="p-6 border-b border-zinc-800/30">
+      <div className=" border-b border-zinc-800/30">
         <div className="flex items-center justify-between">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
@@ -108,7 +108,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
             exit={{ height: 0, opacity: 0 }}
             className="border-b border-zinc-800/30"
           >
-            <div className="p-6 space-y-4">
+            <div className="">
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium text-zinc-400">
                   Brand:
@@ -183,7 +183,7 @@ const Page: FC<{ title: string }> = ({ title }) => {
             <span className="text-sm text-zinc-400">
               Showing {(page - 1) * limit + 1} to{" "}
               {Math.min(page * limit, productMeta.totalCount)} of{" "}
-              {productMeta.totalCount} results
+              {productMeta.totalPages} results
             </span>
             <div className="flex items-center gap-2">
               <button
