@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { LucideEye, LucideEyeOff, LucideMail, LucideLock } from "lucide-react";
 import Link from "next/link";
 import { useLoginUserMutation } from "@/Redux/RTK/auth.api";
+import Loading from "@/components/Loading";
 
 const loginSchema = z.object({
   email: z.string().email("Invalid email address"),

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import Link from "next/link";
@@ -6,6 +7,7 @@ import { Bell, ShoppingCart, Upload, Download, User } from "lucide-react";
 import { motion } from "framer-motion";
 import { Import } from "./Dialog/Import";
 import { useGetUserQuery } from "@/Redux/RTK/auth.api";
+import icon from "@/public/icon.png";
 
 const iconVariants = {
   initial: { scale: 1 },
@@ -42,10 +44,10 @@ const Navbar = () => {
           {/* Logo/Brand */}
           <Link href="/" className="flex items-center space-x-2">
             <motion.div
-              whileHover={{ rotate: 5 }}
-              className="bg-gradient-to-br from-indigo-500 to-purple-500 p-2 rounded-lg"
+              whileHover={{ rotate: 360 }}
+              className="bg-gradient-to-br rounded-lg"
             >
-              <span className="font-bold text-white text-xl">T</span>
+              <img src={icon.src} alt="icon" className="w-12 h-12" />
             </motion.div>
             <span className="text-xl font-bold bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent">
               Temps

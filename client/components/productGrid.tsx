@@ -71,7 +71,7 @@ const ProductGrid: FC<{
   }, [productData]);
 
   return (
-    <div className="grid overflow-y-scroll gap-1 grid-cols-2 md:grid-cols-3 xl:grid-cols-5 w-full h-full">
+    <div className="grid gap-1 grid-cols-2 md:grid-cols-3 xl:grid-cols-5 w-full h-full">
       {productData?.length && productData?.length < 1 ? (
         <></>
       ) : (
